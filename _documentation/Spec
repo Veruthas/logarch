@@ -1,0 +1,78 @@
+do    <command>
+
+on    <command> ...
+ask   <prompt>  ...                                 -- asks yes/no question
+
+if    <tag>     ...
+
+set   {tags}
+unset {tags}
+
+tags                                                -- (unlogged) prints out tags
+
+help                                                -- (unlogged) print out list of commands
+
+
+-- pacman commands
+get    [--confirm] [--options <options>] {pkgs}     -- get the packages, require update if date has passed 
+aur    <pkg>                                        -- requires getting other aur dependencies by itself; if frozen, will inform and ask
+find   <pkg>                                        -- (unlogged) query database for package
+repo   (--bottom|--top|--index #) <name> <url> [siglevel] -- adds the server to the bottom or top, or # position in list; warn if frozen, display frozen date and time difference
+key    <stuff>                                      -- pacman-key <stuff>
+sync                                                -- asks for main update if required, updates to new #
+        
+                                                    -- *if frozen to a relative state, when state passed, will ask whether to move to (date) or (now)
+                                                    -- ~warn if date before current database date
+update  
+        (absolute)~ <year> <month> <day>                        
+        (days)~   <#days>                       
+        (date)~   <1-31>
+        (month)*~                                   -- 1st of every month
+        (weekday) (Sun|Mon|Tue|Wed|Thu|Fri|Sat)
+        (week)*~                                    -- Sunday of every week                
+        (now)               
+        
+date    [--all]                                     -- (unlogged) echo database date
+
+
+File layout:
+/etc/logarch.conf
+    -- Line 1: location of cache folder    
+
+    
+<cache folder>
+    packages/
+        <all packages>
+        
+    updates/
+        <#>/            
+            sync/       -- copy
+            gnupg/      -- copy
+            
+            date.dat    -- update info
+                
+            
+            log.dat    -- logged commands
+                <command>
+                "Start: <YYYY/MM/DD-HH:MM:SS>"
+                "End:   <YYYY/MM/DD-HH:MM:SS>
+                "Data: <data>"
+                    
+                    :<data>
+                       for 'get': {Pkg: "<used packages>"}
+                    
+                        
+    
+    tags.txt   -- quoted tags
+    
+    repos.txt        
+        :(testing | core | extra | community-testing | community | multilib-testing | multilib)
+        :else
+            <name> 
+            <url>
+            <siglevel> -- blank if unused
+    
+    
+    
+
+

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# libraries
+source util.sh;
+source options.sh;
+source tag-options.sh;
+source package-options.sh;
+source help-options.sh;
+
+process "$@";
