@@ -1,4 +1,4 @@
 logarch
 =======
 
-An Arch Linux installing logging programming written in bash
+An Arch Linux installation logging programming written in bash
