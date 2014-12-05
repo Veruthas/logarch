@@ -6,16 +6,16 @@
 
 # list of all options
 declare OPTIONS="help \
-                do on ask \
-                if set unset tags \
-                get aur find repo key \
-                update date";
+                do if ask \
+                on set unset tags \
+                get aur find key \
+                sync update date repo ";
 
 # list of options that get logged
-declare LOG_OPTIONS="do on ask \
-                     if set unset \
-                     get aur repo key \
-                     update"; 
+declare LOG_OPTIONS="do if ask \
+                     on set unset \
+                     get aur key \
+                     sync update repo "; 
 
 declare LOG=false;
 
@@ -55,7 +55,7 @@ function option_log_defined() {
 
 
 declare UNEMPTY_OPTION_ERROR="invalid argument: ";
-function confirm_options_done() {
+function confirm_no_options() {
     confirm_empty "$UNEMPTY_OPTION_ERROR" "$@";
 }
 
@@ -66,13 +66,13 @@ function do_option() {
     local command="$1";
     shift;
     
-    confirm_options_done "$@";
+    confirm_no_options "$@";
     
     eval "$command";
 }
 
-# void do_option(String command, String[] options)
-function on_option() {  
+# void if_option(String command, String[] options)
+function if_option() {  
 
     local command="$1";
     shift;

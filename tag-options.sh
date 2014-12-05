@@ -115,7 +115,7 @@ function unset_option() {
 
 # String tags() : errors
 function tags_option() {
-    verify_no_args "$@";
+    confirm_no_options "$@";
     
     print_tags "tags: ";    
 }

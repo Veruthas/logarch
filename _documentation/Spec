@@ -20,17 +20,17 @@ find   <pkg>                                        -- (unlogged) query database
 repo   (--bottom|--top|--index #) <name> <url> [siglevel] -- adds the server to the bottom or top, or # position in list; warn if frozen, display frozen date and time difference
 key    <stuff>                                      -- pacman-key <stuff>
 sync                                                -- asks for main update if required, updates to new #
-        
-                                                    -- *if frozen to a relative state, when state passed, will ask whether to move to (date) or (now)
-                                                    -- ~warn if date before current database date
-update  
-        (absolute)~ <year> <month> <day>                        
-        (days)~   <#days>                       
-        (date)~   <1-31>
-        (month)*~                                   -- 1st of every month
-        (weekday) (Sun|Mon|Tue|Wed|Thu|Fri|Sat)
-        (week)*~                                    -- Sunday of every week                
-        (now)               
+                                                        
+
+update
+        (absolute) <year> <month> <day> [hour [minute]]
+        (days)     <#days>
+        (date)     (01-31) [hour [minute]]
+        (month)
+        (weekday)  (1-7) | (sunday|monday|tuesday|wednesday|thursday|friday|saturday)
+        (week)
+        (time)     hour [minute]
+        (daily)
         
 date    [--all]                                     -- (unlogged) echo database date
 

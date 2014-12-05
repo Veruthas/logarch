@@ -6,7 +6,7 @@
 
 #region PACKAGES
 
-# [--confirm] {pkgs}
+# void get_option([--confirm], [--options, String options], String[] pkgs) : errors
 function get_option() {
     
     local confirm="";
@@ -19,6 +19,7 @@ function get_option() {
     pacman -Q $confirm --cachedir $(get_cache_path) "$@"        
 }
 
+# void aur_option(String pkg) : errors
 function aur_option() {
       :
 }
@@ -36,28 +37,38 @@ function find_option() {
 
 #region UPDATES
 
-# returns the current cache-path (based on update)
+# String get_cache_path()
 function get_cache_path() {
-:
+    :
 }
 
+# bool check_for_update()
 function check_for_update() {
-:
+    :
 }
 
+#region UPDATE_OPTIONS
 
+# void sync()
+function sync_option() {
+    confirm_no_options "$@";
+}
 
 # void update_option(UpdateType type, (Date or int or Day) value) : *see UpdateType
 function update_option() {
 :
 }
 
+
+
 # String date_option ("--all" displayAll)
 function date_option() {
       :
 }
 
-#region Doc: 
+#endregion
+
+#region Doc: Update time points
 UPDATE_INFO
 
 ## "TYPES"
@@ -65,7 +76,7 @@ UPDATE_INFO
 #       <Year> <Month> <Day> [Time]
 
 #    WeekDay: enum
-#       Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday
+#       sunday|monday|tuesday|wednesday|thursday|friday|saturday
 #       - also takes a number 1-7
 
 #    Time
@@ -117,15 +128,14 @@ UPDATE_INFO
 #endregion
 
 
-
-
 #region REPOSITORY
 
+# void repo_option((--bottom|--top|--index, int index), String name, String url, String? siglevel)
 function repo_option() {
       :
 }
 
-# <command...>
+# void key_option(String key_data)
 function key_option() {
     pacman-key "$@"
 }

@@ -16,11 +16,16 @@ function do_help() {
       :
 }
 
-function on_help() {
+
+function if_help() {
       :
 }
 
-function if_help() {
+function ask_help() {
+    :
+}
+
+function on_help() {
       :
 }
 
