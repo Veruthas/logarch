@@ -7,16 +7,21 @@
 #region PACKAGES
 
 # void get_option([--confirm], [--options, String options], String[] pkgs) : errors
-function get_option() {
+function get_option() {            
     
-    local confirm="";
-    
-    if [[ $1 != --confirm ]]; then
-        confirm="--noconfirm";
-        shift;
-    fi
+    local confirm;
+    [[ $1 == --confirm ]] && shift || confirm="--noconfirm";
           
-    pacman -Q $confirm --cachedir $(get_cache_path) "$@"        
+    local options;
+    [[ $1 == --options ]] && ( options="$2"; shift 2 );
+    
+    local cache_path=$(get_cache_path);
+    
+    local current=$(get_current_pkgs)        
+    
+    pacman -Q $confirm --cachedir cache_path "$@"
+    
+    local difference=$(compary_pkgs $current);
 }
 
 # void aur_option(String pkg) : errors
@@ -35,7 +40,7 @@ function find_option() {
 
 #endregion
 
-#region UPDATES
+#region SYNC
 
 # String get_cache_path()
 function get_cache_path() {
@@ -60,8 +65,7 @@ function update_option() {
 }
 
 
-
-# String date_option ("--all" displayAll)
+# String date_option (["--all"])
 function date_option() {
       :
 }
@@ -69,7 +73,6 @@ function date_option() {
 #endregion
 
 #region Doc: Update time points
-UPDATE_INFO
 
 ## "TYPES"
 #    Date
@@ -124,6 +127,8 @@ UPDATE_INFO
 # daily: same as 12:00am
 
 #endregion
+
+
 
 #endregion
 

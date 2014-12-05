@@ -6,7 +6,7 @@
 
 declare -A TAGS=();     # cached tags from file
 
-declare TAG_FILE="Debug/tags";
+declare TAG_FILE="$(get_cache_path)/tags.dat";
 
 declare TAGS_LOADED;    # flag to see if flags already cached
 
@@ -93,8 +93,8 @@ function tag_defined() {
 
 #region TAG OPTIONS
 
-# void if_option(String tag, String[] args)
-function if_option() {
+# void on_option(String tag, String[] args)
+function on_option() {
     local tag=$1;
     shift;
     

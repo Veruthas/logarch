@@ -17,9 +17,6 @@ declare LOG_OPTIONS="do if ask \
                      get aur key \
                      sync update repo "; 
 
-declare LOG=false;
-
-
 # void process(String command, String[] args)
 function process() {
     

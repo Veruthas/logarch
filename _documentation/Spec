@@ -1,9 +1,9 @@
 do    <command>
 
-on    <command> ...
+if    <command> ...
 ask   <prompt>  ...                                 -- asks yes/no question
 
-if    <tag>     ...
+on    <tag>     ...
 
 set   {tags}
 unset {tags}
@@ -17,10 +17,9 @@ help                                                -- (unlogged) print out list
 get    [--confirm] [--options <options>] {pkgs}     -- get the packages, require update if date has passed 
 aur    <pkg>                                        -- requires getting other aur dependencies by itself; if frozen, will inform and ask
 find   <pkg>                                        -- (unlogged) query database for package
-repo   (--bottom|--top|--index #) <name> <url> [siglevel] -- adds the server to the bottom or top, or # position in list; warn if frozen, display frozen date and time difference
-key    <stuff>                                      -- pacman-key <stuff>
+
+# sync commands
 sync                                                -- asks for main update if required, updates to new #
-                                                        
 
 update
         (absolute) <year> <month> <day> [hour [minute]]
@@ -31,8 +30,15 @@ update
         (week)
         (time)     hour [minute]
         (daily)
+
+date    [--all]                                           -- (unlogged) echo database date
+
+# repos
+repo   (--bottom|--top|--index #) <name> <url> [siglevel] -- adds the server to the bottom or top, or # position in list; warn if frozen, display frozen date and time difference                                                        
+
+key    <stuff>                                            -- pacman-key <stuff>
         
-date    [--all]                                     -- (unlogged) echo database date
+
 
 
 File layout:
@@ -63,14 +69,16 @@ File layout:
                     
                         
     
-    tags.txt   -- quoted tags
+    tags.dat   -- quoted tags
     
-    repos.txt        
-        :(testing | core | extra | community-testing | community | multilib-testing | multilib)
-        :else
-            <name> 
-            <url>
-            <siglevel> -- blank if unused
+    repos.dat
+        (testing | core | extra | community-testing | community | multilib-testing | multilib)
+        <blank>
+            :or
+        <name> 
+        <url>
+        <siglevel> -- blank if unused
+        <blank>
     
     
     
