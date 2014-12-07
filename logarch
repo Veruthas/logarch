@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash +x
 
 # libraries
 source util.sh;
@@ -9,4 +9,4 @@ source tag-options.sh;
 source package-options.sh;
 source help-options.sh;
 
-process "$@";
+process_line "$@";

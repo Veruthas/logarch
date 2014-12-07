@@ -107,7 +107,7 @@ function set_option() {
     
     add_tags "$@";
     
-    enable_log();
+    enable_log;
 }
 
 # void unset_option(String[] tags)
@@ -115,7 +115,7 @@ function unset_option() {
     
     remove_tags "$@";
     
-    enable_log();
+    enable_log;
 }
 
 # String tags() : errors

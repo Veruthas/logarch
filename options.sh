@@ -11,12 +11,6 @@ declare OPTIONS="help \
                 get aur find key \
                 sync update date repo ";
 
-# list of options that get logged
-declare LOG_OPTIONS="do \
-                     set unset \
-                     get aur key \
-                     sync update repo "; 
-
 # void process(String command, String[] args)
 function process() {
     
@@ -40,12 +34,13 @@ function process() {
 # void process(String[] args)
 function process_line() {
     
-    reset_log_status; 
+    disable_log;
     
     process "$@";
     
-    if $LOG; then log_data "$@"; fi      
+    log_data "$@";      
 }
+
 
 # bool option_defined(String option)
 function option_defined() {
@@ -65,6 +60,7 @@ function confirm_no_options() {
 }
 
 
+#region BASIC OPTIONS
 # void do_option(String command) : errors
 function do_option() {
 
@@ -101,3 +97,5 @@ function ask_option() {
         process "$@";
     fi
 }
+
+#endregion

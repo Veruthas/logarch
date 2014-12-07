@@ -50,10 +50,11 @@ File layout:
     packages/
         <all packages>
         
-    updates/
+    sync/
         <#>/            
             sync/       -- copy
             gnupg/      -- copy
+
             
             date.dat    -- update info
                 
@@ -61,12 +62,8 @@ File layout:
             log.dat    -- logged commands
                 <command>
                 "Start: <YYYY/MM/DD-HH:MM:SS>"
-                "End:   <YYYY/MM/DD-HH:MM:SS>
-                "Data: <data>"
-                    
-                    :<data>
-                       for 'get': {Pkg: "<used packages>"}
-                    
+                "End:   <YYYY/MM/DD-HH:MM:SS>"
+
                         
     
     tags.dat   -- quoted tags
