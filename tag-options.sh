@@ -2,13 +2,12 @@
 #
 # Description: handles the tag options (used for conditions)
 
-
-
 declare -A TAGS=();     # cached tags from file
 
-declare TAG_FILE="$(get_cache_path)/tags.dat";
+declare TAG_FILE="$CACHE_PATH/tags.dat";
 
 declare TAGS_LOADED;    # flag to see if flags already cached
+
 
 #region TAG UTIL
 # void load_tags() : TAG_FILE-> TAGS
@@ -105,16 +104,23 @@ function on_option() {
 
 # void set_option(String[] tags)
 function set_option() {    
+    
     add_tags "$@";
+    
+    enable_log();
 }
 
 # void unset_option(String[] tags)
 function unset_option() {
+    
     remove_tags "$@";
+    
+    enable_log();
 }
 
 # String tags() : errors
 function tags_option() {
+
     confirm_no_options "$@";
     
     print_tags "tags: ";    

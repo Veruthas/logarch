@@ -1,9 +1,9 @@
 do    <command>
 
-if    <command> ...
-ask   <prompt>  ...                                 -- asks yes/no question
+if    <command> ...                                 -- (unlogged) 
+ask   <prompt>  ...                                 -- (unlogged) asks yes/no question
 
-on    <tag>     ...
+on    <tag>     ...                                 -- (unlogged) 
 
 set   {tags}
 unset {tags}

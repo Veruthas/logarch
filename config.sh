@@ -2,14 +2,11 @@
 #
 # Description: Handles basic logarch configuration
 
-# String get_cache_path()
-function get_cache_path() {
-    echo ../_debug/;
-}
+declare CACHE_PATH="../_debug";
 
 # void setup_caches
 function setup_cache() {
-    path=$(get_cache_path)
+    path=$CACHE_PATH;
     
     mkdir -v $path/packages;
     mkdir -v $path/updates;

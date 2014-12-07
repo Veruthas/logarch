@@ -12,8 +12,8 @@ declare OPTIONS="help \
                 sync update date repo ";
 
 # list of options that get logged
-declare LOG_OPTIONS="do if ask \
-                     on set unset \
+declare LOG_OPTIONS="do \
+                     set unset \
                      get aur key \
                      sync update repo "; 
 
@@ -23,9 +23,7 @@ function process() {
     local option="$1"; shift;    
     
     if option_defined $option; then
-    
-        if option_log_defined $option; then LOG=true; fi                
-        
+                      
         ${option}_option "$@";
         
     else
@@ -37,6 +35,16 @@ function process() {
         return 1;        
         
     fi
+}
+
+# void process(String[] args)
+function process_line() {
+    
+    reset_log_status; 
+    
+    process "$@";
+    
+    if $LOG; then log_data "$@"; fi      
 }
 
 # bool option_defined(String option)
@@ -66,6 +74,8 @@ function do_option() {
     confirm_no_options "$@";
     
     eval "$command";
+    
+    enable_log;
 }
 
 # void if_option(String command, String[] options)
