@@ -62,16 +62,14 @@ function insert_lines() {
     local i=0;
     
     # append
-    if (( index < 0 )) || (( index  >= total )); then
-        echo append;
+    if (( index < 0 )) || (( index  >= total )); then        
         for (( ; i < count; i++ )); do
             printf "%s\n" "$1" >> $file;
             shift;
         done
         
     # prepend/insert
-    else
-        echo insert
+    else        
         # use a here-string
         local data=$(cat $file);
     

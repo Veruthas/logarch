@@ -69,9 +69,9 @@ declare SYNC_CHANGED_PATH="$SYNC_PATH/sync_changed"
 
 declare -r SYNC_SERVER_FILE="$SYNC_PATH/arm_path";
 
-declare -r REPOS="testing core extra \
-                   community_testing community \
-                   multilib-testing multilib";
+declare -r SPECIAL_REPOS="testing core extra \
+                          community_testing community \
+                          multilib-testing multilib";
 
 declare -r PACMAN_CONF_BASE="$CACHE_PATH/base.conf"
 declare -r PACMAN_REPO_FILE="$CACHE_PATH/repos.conf"
@@ -94,12 +94,19 @@ function clear_sync_changed() {
 }
 
 
-# void sync_arch() : errors
+function update() {    
+}
+
+# void sync_arch(bool? force=false) : errors
 function sync_arch() {   
+    
+    local force=;
+    [[ -z $1 ]] && force=false || force=true;
+    
     # TODO: remove after debug
     set_sync_changed;
     
-    if sync_changed; then
+    if $force || sync_changed; then
         
         echo "Syncing repository info..."
         
@@ -119,7 +126,6 @@ function sync_arch() {
         
     fi
 }
-
 
 # void add_repository((--top|--bottom|--index int Index) position, 
 #                     String name, String? server, String? siglevel)
@@ -148,7 +154,7 @@ function add_repository() {
     local location=$2;
     local siglevel=$3;
         
-    if contains_item $name "$REPOS"; then
+    if contains_item $name "$SPECIAL_REPOS"; then
         name="[$name]";        
         location="Include = $SYNC_SERVER_FILE"
         siglevel="#SigLevel = Optional TrustAll";
@@ -175,6 +181,18 @@ function add_repository() {
     enable_log;        
 }
 
+# void add_key(String[] commands)
+function add_key() {
+
+    pacman-key "$@";
+    
+    enable_log;
+    
+    set_sync_changed;
+}
+
+
+
 
 #region SYNC OPTIONS
 
@@ -190,23 +208,18 @@ function update_option() {
 }
 
 
-# String date_option (["--all"])
-function date_option() {
-      :
-}
-
 #endregion
 
 #region REPOSITORY OPTIONS
 
 # void repo_option((--bottom|--top|--index, int index), String name, String url, String? siglevel)
 function repo_option() {
-      add_repository "$@";
+    add_repository "$@";
 }
 
 # void key_option(String key_data)
 function key_option() {
-    pacman-key "$@"
+    add_key "$@"
 }
 
 #endregion

@@ -19,7 +19,7 @@ aur    <pkg>                                        -- requires getting other au
 find   <pkg>                                        -- (unlogged) query database for package
 
 # sync commands
-update
+sync                                                -- sets auto-sync intervals
         (absolute)                                  -- locks a relative into absolute
         (date) <year> <month> <day>
         (today)
@@ -37,7 +37,10 @@ update
         (time)     hour [minute]
         (daily)
 
-date    [--all]                                           -- (unlogged) echo database date
+        (force)     force an update whether or not one is required
+        
+        <nothing>   update based on date
+        
 
 # repos
 repo   (--bottom|--top|--index #) <name> <url> [siglevel] -- adds the server to the bottom or top, or # position in list; warn if frozen, display frozen date and time difference                                                        
@@ -50,24 +53,34 @@ key    <stuff>                                            -- pacman-key <stuff>
 File layout:
 /etc/logarch.conf
     -- Line 1: location of cache folder    
-
-    sync_changed
-    server_file         --link to recent server_file
-        
+    
 <cache folder>
     packages/
         <all packages>
     
     sync/
-        sync_changed
+        sync_changed  ->    flag file when sync changed in someway (update, repo added, keys)
+                
+        current/      ->    points to sync/<#> (the latest)    
         
         <#>/            
             sync/       -- copy
             gnupg/      -- copy
             
-            server_file -- calculated url to mirror
+            server_file         -- calculated url to mirror
             
-            date.dat    -- update info
+            date_info           -- update info
+                <date type>
+                <all arguments> (ex Absolute: YYYY MM DD)
+                <update by>     (next date calculated)
+                
+                
+                date
+                YYYY MM DD
+                <blank>
+                
+                hours
+                
                 
             
 
