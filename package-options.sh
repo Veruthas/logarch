@@ -6,7 +6,7 @@
 
 ## "TYPES"
 #    Date
-#       <Year> <Month> <Day> [Time]
+#       <Year> <Month> <Day>
 
 #    WeekDay: enum
 #       sunday|monday|tuesday|wednesday|thursday|friday|saturday
@@ -17,7 +17,8 @@
 
 #    UpdateType:
 #       <absolute>
-#       absolute  (Date)            => abs YYYY MM DD
+#       absolute                    => abs YYYY MM DD   (locks a relative date into absolute)
+#       date  (Date)                => abs YYYY MM DD
 #       today                       => abs YYYY MM DD
 #       yesterday                   => abs YYYY MM DD (-1)
 
@@ -25,7 +26,7 @@
 #       hours     (int)             => hours #####
 #       days      (int)             => hours (24 * int)
 
-#       date*     (01-31) [Time]    => date DD hh mm
+#       day*      (01-31) [Time]    => date DD hh mm
 #       month*                      => date 01 00 00
 
 #       weekday*  (WeekDay) [Time]  => week DAY    hh mm
@@ -66,6 +67,17 @@
 
 declare SYNC_CHANGED_PATH="$SYNC_PATH/sync_changed"
 
+declare -r SYNC_SERVER_FILE="$SYNC_PATH/arm_path";
+
+declare -r REPOS="testing core extra \
+                   community_testing community \
+                   multilib-testing multilib";
+
+declare -r PACMAN_CONF_BASE="$CACHE_PATH/base.conf"
+declare -r PACMAN_REPO_FILE="$CACHE_PATH/repos.conf"
+declare -r PACMAN_CONF_FILE="../_debug/pacman.conf"; #/etc/pacman.conf
+
+
 # bool sync_changed
 function sync_changed() {    
     [[ -e $SYNC_CHANGED_PATH ]] && return 0 || return 1;
@@ -84,6 +96,7 @@ function clear_sync_changed() {
 
 # void sync_arch() : errors
 function sync_arch() {   
+    # TODO: remove after debug
     set_sync_changed;
     
     if sync_changed; then
@@ -96,6 +109,8 @@ function sync_arch() {
         cp -rv /var/lib/pacman/sync "$CURRENT_SYNC_PATH";
         chmod a+r  "$CURRENT_SYNC_PATH" -Rv
         
+        enable_log;
+        
         clear_sync_changed;
         
     else
@@ -105,17 +120,88 @@ function sync_arch() {
     fi
 }
 
-#region SYNC OPTIONS
 
-# void sync_option()
-function sync_option() {
-    confirm_no_options "$@";
-    sync_arch;
+# void add_repository((--top|--bottom|--index int Index) position, 
+#                    String name, String? server, String? siglevel)
+function add_repository() {
+    
+    local position=$1; shift;
+    local index=;
+    case $position in
+        --top)
+            index=0;
+        ;;
+        --bottom)
+            index=-1;
+        ;;
+        --index)
+            index=$2; shift
+        ;;
+        *)
+    esac
+
+    local name=$1;
+    local location=$2;
+    local siglevel=$3;
+    
+    if contains_item $name "$REPOS"; then
+        name="[$name]";        
+        location="Include = $SYNC_SERVER_FILE"
+    else
+        name="[$name]"
+        location="Server = $location"
+    fi
+    
+    [[ -z $siglevel ]] && siglevel="#SigLevel = Optional TrustAll";
+    
+    insert_repository "$index" "$name" "$location" "$siglevel";
 }
+
+# void insert_repository(int index, String name, String location, String? siglevel)
+function insert_repository() {
+    local index="$1";
+    local name="$2";
+    local location=$3;
+    local siglevel=$4;
+    
+    local current=0;
+    
+    
+    if [[ index == -1 ]]; then
+        # just append the lines
+        echo $name >> $PACMAN_REPO_FILE;
+        echo $location >> $$PACMAN_REPO_FILE;
+        echo $siglevel >> $$PACMAN_REPO_FILE;
+        echo " " >> $$PACMAN_REPO_FILE;
+    else    
+        
+        (( index *= 4 ))
+        (( index++ ));
+        
+        # upside down so don't have to do increment index
+        insert_lines $PACMAN_REPO_FILE $index "$name" "$location" "$siglevel" " ";
+        
+    fi
+    
+    cat $PACMAN_CONF_BASE $PACMAN_REPO_FILE > $PACMAN_CONF_FILE;
+    
+    set_sync_changed;
+    
+    enable_log;        
+}
+
+
+
+#region SYNC OPTIONS
 
 # void update_option(UpdateType type, (Date or int or Day) value) : *see UpdateType
 function update_option() {
-:
+    
+    # check for args
+        
+    # check if server update required
+    
+    # check if sync required
 }
 
 
@@ -130,7 +216,7 @@ function date_option() {
 
 # void repo_option((--bottom|--top|--index, int index), String name, String url, String? siglevel)
 function repo_option() {
-      :
+      add_repository "$@";
 }
 
 # void key_option(String key_data)

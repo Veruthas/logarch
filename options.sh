@@ -9,7 +9,7 @@ declare OPTIONS="help \
                 do if ask \
                 on set unset tags \
                 get aur find key \
-                sync update date repo ";
+                update date repo ";
 
 # void process(String command, String[] args)
 function process() {

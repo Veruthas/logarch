@@ -19,15 +19,21 @@ aur    <pkg>                                        -- requires getting other au
 find   <pkg>                                        -- (unlogged) query database for package
 
 # sync commands
-sync                                                -- asks for main update if required, updates to new #
-
 update
-        (absolute) <year> <month> <day> [hour [minute]]
+        (absolute)                                  -- locks a relative into absolute
+        (date) <year> <month> <day>
+        (today)
+        (yesterday)
+        
+        (hours)        
         (days)     <#days>
-        (date)     (01-31) [hour [minute]]
+        
+        (day)      (01-31) [hour [minute]]
         (month)
+        
         (weekday)  (1-7) | (sunday|monday|tuesday|wednesday|thursday|friday|saturday)
         (week)
+        
         (time)     hour [minute]
         (daily)
 
@@ -45,7 +51,9 @@ File layout:
 /etc/logarch.conf
     -- Line 1: location of cache folder    
 
-    
+    sync_changed
+    server_file         --link to recent server_file
+        
 <cache folder>
     packages/
         <all packages>
@@ -56,7 +64,8 @@ File layout:
         <#>/            
             sync/       -- copy
             gnupg/      -- copy
-
+            
+            server_file -- calculated url to mirror
             
             date.dat    -- update info
                 
@@ -73,13 +82,12 @@ File layout:
     
     tags.dat   -- quoted tags
     
-    repos.dat
-        (testing | core | extra | community-testing | community | multilib-testing | multilib)
-        <blank>
-            :or
-        <name> 
-        <url>
-        <siglevel> -- blank if unused
+    base.conf  -- pre-repo pacman.conf file
+    
+    repos.conf
+        (testing | core | extra | community-testing | community | multilib-testing | multilib | <name> )       
+        <Server> or <Include>   -- on special named, Server argument is ignored
+        <siglevel> | #SigLevel = Optional TrustAll
         <blank>
     
     
