@@ -14,12 +14,6 @@ function setup_cache() {
     touch repos.dat    
 }
 
-# String get_cache_path();
-function get_cache_path() {
-    echo "../_debug"
-}
-
-
 
 # String to_padded_number(int value);
 function to_padded_number() {   
@@ -52,9 +46,13 @@ function last_sync_index() {
 
 # String sync_path_from_index(int index);
 function sync_path_from_index() {
-    echo "$SYNC_PATH/$(to_padded_number $current)";
+    echo "$SYNC_PATH/$(to_padded_number $1)";
 }
 
+# void set_current_sync_path();
+function set_current_sync_path() {
+    CURRENT_SYNC_PATH=$(current_sync_path);
+}
 
 # String current_sync_path()
 function current_sync_path() {
@@ -70,7 +68,7 @@ function current_sync_path() {
 
 # void move_next_sync_path();
 function move_next_sync_path() {
-    SYNC_PATH=$(next_sync_path);
+    CURRENT_SYNC_PATH=$(next_sync_path);
 }
 
 # String next_sync_path()
@@ -88,17 +86,23 @@ function make_sync_path() {
         
     local path=$(to_padded_number $1);
     
-    mkdir -pv $SYNC_PATH/$path;
+    mkdir -p $SYNC_PATH/$path;
         
-    echo $path;
+    echo $SYNC_PATH/$path;
 }
 
 
-declare CACHE_PATH="$(get_cache_path)";
+declare -r CONFIG_FILE='../_debug/logarch.conf'
+
+source $CONFIG_FILE;
+
 
 declare PKG_PATH="$CACHE_PATH/pkg";
 
 declare SYNC_PATH="$CACHE_PATH/sync"
 
-declare CURRENT_SYNC_PATH=$(current_sync_path);
-echo $CURRENT_SYNC_PATH;
+
+declare CURRENT_SYNC_PATH=;
+
+set_current_sync_path;
+

@@ -90,10 +90,9 @@ function ask_option() {
     local prompt=$1;
     shift;
     
-    ask "$prompt (y/n)? " "y";
-    #read -p "$prompt (y/n)? " result;
+    local result=$(ask "$prompt (y/n)? " "y n");
     
-    if [[ $? == 1 ]]; then
+    if [[ $result == y ]]; then
         process "$@";
     fi
 }

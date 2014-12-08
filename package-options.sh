@@ -63,14 +63,54 @@
 
 #endregion
 
- 
 
+declare SYNC_CHANGED_PATH="$SYNC_PATH/sync_changed"
+
+# bool sync_changed
+function sync_changed() {    
+    [[ -e $SYNC_CHANGED_PATH ]] && return 0 || return 1;
+}
+
+# void set_sync_changed();
+function set_sync_changed() {
+    touch $SYNC_CHANGED_PATH;
+}
+
+# void clear_sync_changed();
+function clear_sync_changed() {
+    [[ -e $SYNC_CHANGED_PATH ]] && rm $SYNC_CHANGED_PATH;
+}
+
+
+# void sync_arch() : errors
+function sync_arch() {   
+    set_sync_changed;
+    
+    if sync_changed; then
+        
+        echo "Syncing repository info..."
+        
+        move_next_sync_path        
+        
+        cp -rv /etc/pacman.d/gnupg "$CURRENT_SYNC_PATH";
+        cp -rv /var/lib/pacman/sync "$CURRENT_SYNC_PATH";
+        chmod a+r  "$CURRENT_SYNC_PATH" -Rv
+        
+        clear_sync_changed;
+        
+    else
+        
+        terminate 1 "sync information has not been changed, exiting"
+        
+    fi
+}
 
 #region SYNC OPTIONS
 
-# void sync()
+# void sync_option()
 function sync_option() {
     confirm_no_options "$@";
+    sync_arch;
 }
 
 # void update_option(UpdateType type, (Date or int or Day) value) : *see UpdateType

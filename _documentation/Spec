@@ -49,8 +49,10 @@ File layout:
 <cache folder>
     packages/
         <all packages>
-        
+    
     sync/
+        sync_changed
+        
         <#>/            
             sync/       -- copy
             gnupg/      -- copy
@@ -59,12 +61,15 @@ File layout:
             date.dat    -- update info
                 
             
-            log.dat    -- logged commands
-                <command>
-                "Start: <YYYY/MM/DD-HH:MM:SS>"
-                "End:   <YYYY/MM/DD-HH:MM:SS>"
 
-                        
+<log folder>
+        <#>.dat             -- logged commands, corresponds to sync number
+            <command>
+            "Start: <YYYY/MM/DD-HH:MM:SS>"
+            "End:   <YYYY/MM/DD-HH:MM:SS>"
+
+    
+    
     
     tags.dat   -- quoted tags
     

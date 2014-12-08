@@ -2,7 +2,11 @@
 #
 # Description: utility functions
 
-
+# void terminate(int errorCode, String prompt)
+function terminate() {
+    echo "$2" >&2;
+    exit $1;
+}
 
 # bool contains_item(String item, String[] list)
 function contains_item() {
@@ -20,12 +24,11 @@ function confirm_empty() {
     local message=$1; shift;
     
     if [[ -n "$@" ]]; then
-        echo "$message'$@'"
-        exit 1;
+        terminate 1 "$message'$@'";
     fi
 }
 
-# int ask(String message, String[] responses)
+# String ask(String message, String[] responses)
 function ask() {
     local prompt=$1; shift;    
     local result;
@@ -34,9 +37,13 @@ function ask() {
     
     local i=1;
     
-    for response in "$@"; do
-        [[ $response == $result ]] && return $i;
+    for response in $@; do        
+        if [[ $response == $result ]]; then
+            echo $result; 
+            return;
+        fi
     done
     
-    return 0;
+    echo noresult
+    return 1;
 }
