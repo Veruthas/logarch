@@ -48,43 +48,63 @@ function ask() {
     return 1;
 }
 
-# void insert_line(String file, int index, String line)
-function insert_line() {
-    local file=$1; 
-    local index=$2; shift 2;
-    local line="$1";
+
+# void insert_lines(String file, int index, int count, String[] lines)
+function insert_lines() {
+    local file=$1;        
+    local index=$2;   # index of 0 is prepend, <0 || >lc is append, else is insert 
+    local count=$3;
     
-    local total_lines=$(wc -l < $file);
+    shift 3;
+        
+    local total=$(wc -l < $file);        
+    local i=0;
     
-    echo $line
-    if [[ $index -le $total_lines ]]; then
-        echo $line >> $file;
+    # append
+    if (( index < 0 )) || (( index  >= total )); then
+        
+        for (( ; i < count; i++ )); do
+            echo $1 >> $file;
+            shift;
+        done
+        
+    # prepend/insert
     else
-        sed -i "$index i\\$line" $file;   
-    fi;
+        # use a here-string
+        local data=$(cat $file);
+    
+        # clear the file
+        > $file;
+        
+        while read -r line; do
+        
+            if (( $i == index )); then
+                local j=0;
+                for (( ; j < count; j++ )); do
+                    echo $1 >> $file;
+                    shift;
+                done
+            fi
+            
+            echo $line >> $file;
+            
+            (( i++ ));
+        
+        done <<< "$data"
+    fi       
+    
+    # TODO: think this function is inefficient (counting line multiple times, herestring...)
 }
 
-#void insert_lines(String file, int index, String[] lines)
-function insert_lines() {
-    local file=$1
-    local index=$2;
-    shift 2;
-    
-    echo $file;
-    
-    [[ ! -e "$file" ]] && local total_lines=0 || local total_lines=$(wc -l < $file);
-    
-        
-    while [[ -n $1 ]]; do  
-    
-        if [[ $index -ge $total_lines ]]; then            
-            echo $1 >> $file;
-        else
-            sed -i "$index i\\$line" $file;   
-        fi;
-        
-        shift;
-        echo $index
-        (( index++ ))
-    done
-}
+testFile=$(mktemp);
+
+cat > $testFile << EOF
+a
+b
+c
+d
+f
+EOF
+
+insert_lines $testFile -2 3 0 1 2;
+cat $testFile;

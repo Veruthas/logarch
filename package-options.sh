@@ -167,21 +167,7 @@ function insert_repository() {
     local current=0;
     
     
-    if [[ index == -1 ]]; then
-        # just append the lines
-        echo $name >> $PACMAN_REPO_FILE;
-        echo $location >> $$PACMAN_REPO_FILE;
-        echo $siglevel >> $$PACMAN_REPO_FILE;
-        echo " " >> $$PACMAN_REPO_FILE;
-    else    
-        
-        (( index *= 4 ))
-        (( index++ ));
-        
-        # upside down so don't have to do increment index
-        insert_lines $PACMAN_REPO_FILE $index "$name" "$location" "$siglevel" " ";
-        
-    fi
+    
     
     cat $PACMAN_CONF_BASE $PACMAN_REPO_FILE > $PACMAN_CONF_FILE;
     
@@ -202,6 +188,7 @@ function update_option() {
     # check if server update required
     
     # check if sync required
+    :
 }
 
 
