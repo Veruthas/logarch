@@ -122,11 +122,12 @@ function sync_arch() {
 
 
 # void add_repository((--top|--bottom|--index int Index) position, 
-#                    String name, String? server, String? siglevel)
+#                     String name, String? server, String? siglevel)
 function add_repository() {
     
     local position=$1; shift;
     local index=;
+    
     case $position in
         --top)
             index=0;
@@ -135,47 +136,44 @@ function add_repository() {
             index=-1;
         ;;
         --index)
-            index=$2; shift
+            index=$1; shift;            
+            (( index *= 4 ));                      
         ;;
         *)
+            terminate 1 "missing repository destination";
+        ;;
     esac
 
     local name=$1;
     local location=$2;
     local siglevel=$3;
-    
+        
     if contains_item $name "$REPOS"; then
         name="[$name]";        
         location="Include = $SYNC_SERVER_FILE"
+        siglevel="#SigLevel = Optional TrustAll";
     else
         name="[$name]"
+        
         location="Server = $location"
-    fi
+        
+        if [[ -n $siglevel ]]; then
+            siglevel="SigLevel = $siglevel";
+        else
+            siglevel="#SigLevel = Optional TrustAll";
+        fi
+    fi        
+        
     
-    [[ -z $siglevel ]] && siglevel="#SigLevel = Optional TrustAll";
+    # insert the lines
+    insert_lines "$PACMAN_REPO_FILE" $index 4 "$name" "$location" "$siglevel"
     
-    insert_repository "$index" "$name" "$location" "$siglevel";
-}
-
-# void insert_repository(int index, String name, String location, String? siglevel)
-function insert_repository() {
-    local index="$1";
-    local name="$2";
-    local location=$3;
-    local siglevel=$4;
-    
-    local current=0;
-    
-    
-    
-    
-    cat $PACMAN_CONF_BASE $PACMAN_REPO_FILE > $PACMAN_CONF_FILE;
+    cat "$PACMAN_CONF_BASE" "$PACMAN_REPO_FILE" > "$PACMAN_CONF_FILE";
     
     set_sync_changed;
     
     enable_log;        
 }
-
 
 
 #region SYNC OPTIONS

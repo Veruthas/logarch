@@ -4,7 +4,7 @@
 
 # void terminate(int errorCode, String prompt)
 function terminate() {
-    echo "$2" >&2;
+    echo "ERROR: $2" >&2;
     exit $1;
 }
 
@@ -57,19 +57,21 @@ function insert_lines() {
     
     shift 3;
         
-    local total=$(wc -l < $file);        
+    [[ -e $file ]] && local total=$(wc -l < $file) || local total=0;
+    
     local i=0;
     
     # append
     if (( index < 0 )) || (( index  >= total )); then
-        
+        echo append;
         for (( ; i < count; i++ )); do
-            echo $1 >> $file;
+            printf "%s\n" "$1" >> $file;
             shift;
         done
         
     # prepend/insert
     else
+        echo insert
         # use a here-string
         local data=$(cat $file);
     
@@ -81,30 +83,20 @@ function insert_lines() {
             if (( $i == index )); then
                 local j=0;
                 for (( ; j < count; j++ )); do
-                    echo $1 >> $file;
+                    printf "%s\n" "$1" >> $file;
                     shift;
                 done
             fi
             
-            echo $line >> $file;
+            printf "%s\n" "$line" >> $file;
             
             (( i++ ));
         
         done <<< "$data"
+        
+        # HACK: This is to keep it consistent, otherwise change (index >= total) to '>'
+        printf "\n" >> $file; 
     fi       
     
     # TODO: think this function is inefficient (counting line multiple times, herestring...)
 }
-
-testFile=$(mktemp);
-
-cat > $testFile << EOF
-a
-b
-c
-d
-f
-EOF
-
-insert_lines $testFile -2 3 0 1 2;
-cat $testFile;
