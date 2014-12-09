@@ -11,26 +11,26 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
    - TODO: Add options
 
 ### **logarch**
-   - format is: **logarch** <option\> ...
+   - format is: **logarch** \<option\> ...
    
 #### *basic options*
-* **do**    <command\>
+* **do**    \<command\>
     
         DO the supplied command
             translate to 'eval <command>'
         
-* **if**    <command\> &nbsp;&nbsp;  ...
+* **if**    \<command\> &nbsp;&nbsp;  ...
 
         IF command yields (bash) true > ...
             translates to 'if eval <command>; then logarch ...'
         
-* **ask**   <prompt\>&nbsp;&nbsp; ...
+* **ask**   \<prompt\>&nbsp;&nbsp; ...
         
         ASKS a (y/n) question, if answer is yes > ...
             translates to 'if $(ask $prompt) == 'y'; then logarch...'
 
 
-* **edit** <file> (--list | --clear | --remove # | (--append|--prepend|--insert #) <line\> | --modify # # <data\>)
+* **edit** \<file\> (--list | --clear | --remove # | (--append|--prepend|--insert #) \<line\> | --modify # # \<data\>)
 
         <file>                  the name of the file to edit
         
@@ -45,7 +45,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
                                     ($2 < 0 || $2 > length is added to end of line)
 
 #### *tag options*
-* **on**    <tag\> &nbsp;&nbsp;...
+* **on**    \<tag\> &nbsp;&nbsp;...
         
         IF tag defined > ...
     
@@ -74,7 +74,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
         
         [unlogged]
         
-* **auto** <args\>
+* **auto** \<args\>
     
         <args>:
             hours       ##
@@ -109,9 +109,9 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
         '--[un]comment #'       comments/uncomments a line with a '#'
             
 
-* **repo** --list | --clear | --remove # | ((--append|--prepend|--insert #) *<arg[s]\>*) 
+* **repo** --list | --clear | --remove # | ((--append|--prepend|--insert #) *\<arg[s]\>*) 
     
-    *<args\>*:
+    *\<args\>*:
 
     * (core | community | extra | multilib | testing | community-testing | extra-testing | multilib-testing)
     * <name\> <server\> [siglevel]
@@ -126,7 +126,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
             
             special-name servers 'Include = arm_server.dat', and have 'SigLevel = PackageRequired'
 
-* **key** <command\>
+* **key** \<command\>
 
         simply logs and executes 'pacman-key <command>'
 
@@ -136,14 +136,14 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
 
         [only logged on success]
     
-* **aur** <aur-pkg\>
+* **aur** \<aur-pkg\>
 
         downloads a package and installs it and its official dependencies
         (unofficial aur dependencies MUST be installed using aur FIRST)
         
         [only logged on success]
     
-* **find** <pkg\>
+* **find** \<pkg\>
 
         looks for package [unlogged]
 
