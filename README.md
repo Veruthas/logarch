@@ -60,8 +60,8 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
 #### *node options*
 * **node** [--to # | --list | --this | --index #]
 
-        creates a new node, without syncing/upgrading
-        (results in a fork if the same cache is used on different systems)
+        (nothing)               creates a new node, without syncing/upgrading
+                                (results in a fork if the same cache is used on different systems)
         
         --to #                  confirms that # is in the same branch, traces until then
         --list                  prints out headers of all nodes in current branch 
@@ -72,7 +72,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
 
         [unlogged]
         
-* **sync** [*--date* YYYY MM DD 
+* **sync** [*--date* YYYY MM DD]
 
         --date (or nothing)     syncs either to today or to specified date, and upgrades
         
@@ -110,7 +110,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
             * wait until next interval
             * sync
 
-* **conf** *(same args as __edit__ with the [besides <file>])* | '--[un]comment #'
+* **conf** *(same args as __edit__ [besides \<file\>])* | '--[un]comment #'
 
         '--[un]comment #'       comments/uncomments a line with a '#'
             
@@ -159,7 +159,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
                 
         node/ -> <cache>/<#>/   -- link to <Cache Path>/nodes/<##########>
 
-        var/  -> <var>/<#>/            
+        var/  -> <var>/<#>/     -- link to system specific data
         
         
     <Cache Path>/
@@ -196,7 +196,5 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
             
                 pacman-base.dat             -- file with the extra non-repo pacman.conf info
                 
-                pacman-repo.dat             -- file listing pacman.conf's repositories
-                
-                log.dat                     -- extra info of on all commands
-                                               <format>
+                pacman-repo.dat             -- file listing pacman.conf's repositories                                
+                                                
