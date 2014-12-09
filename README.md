@@ -129,7 +129,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
     *\<args\>*:
 
     * (core | community | extra | multilib | testing | community-testing | extra-testing | multilib-testing)
-    * <name\> <server\> [siglevel=PackageRequired]
+    * \<name\> \<server\> [siglevel=PackageRequired]
     
             '--list'            prints a numbered list of current repositories  [unlogged]
             '--clear'           removes all repositories
