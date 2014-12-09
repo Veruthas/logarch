@@ -39,7 +39,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
         '--remove' # [#]        removes $2 lines from line $1
         '--append <line>'       appends <line>
         '--prepend <line>'      inserts <line> to top of file
-        '--insert # <line>'     inserts line at given index (# < 0 || # > lines is an append)
+        '--insert # <line>'     inserts line at given index
         '--modify # # <data>'   modifies the line $1 at position $2 with data         
 
         for any index or position i,             
