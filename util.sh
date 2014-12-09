@@ -61,77 +61,32 @@ function log() {
     echo $result;
 }
 
-# void list_file(String file, int? start)
-function list_file() {
-    local file=$1;
-    local i=$2;
-    [[ -z $i ]] && i=0;
-    
-    if [[ ! -e $file ]]; then
-        echo "file doesn't exist";
-    else
-        local maxlen=$(wc -l < $file);
-        maxlen=${#maxlen};
-        
-        # IFS= preserves left padding
-        #for line in "$(<$file)"; do        
-        while IFS= read line || [[ -n $line ]]; do
-            printf "%*s" $(( maxlen - ${#i} ));
-            
-            printf "$i: %s\n" "$line";
-            (( i++ ));
-        
-        done < $file;
-    fi
-}
+# HACK: Using eval for functional-style programming
 
-# void insert_lines(String file, int index, int count, String[] lines)
-function insert_lines() {
-    local file=$1;        
-    local index=$2;   # index of 0 is prepend, <0 || >lc is append, else is insert 
-    local count=$3;
+# void process_file(String file, String command, String? init)
+function process_file() {
+
+    local file=$1;
+    local command="$2";
+    local init="$3";
     
-    shift 3;
+    [[ ! -e $file ]] && terminate 1 "file not found: '$file'";
         
-    [[ -e $file ]] && local total=$(wc -l < $file) || local total=0;
     
-    local i=0;
+    [[ -n "$init" ]] && eval "$init";
     
-    # append
-    if (( index < 0 )) || (( index  >= total )); then        
-        for (( ; i < count; i++ )); do
-            printf "%s\n" "$1" >> $file;
-            shift;
-        done
+    local line=;
+    local index=0;    
         
-    # prepend/insert
-    else        
-        # use a here-string
-        local data=$(cat $file);
-            
-        clear_file $file;
-        
-        while IFS= read -r line || [[ -n $line ]]; do
-        
-            if (( $i == index )); then
-                local j=0;
-                for (( ; j < count; j++ )); do
-                    printf "%s\n" "$1" >> $file;
-                    shift;
-                done
-            fi
-            
-            printf "%s\n" "$line" >> $file;
-            
-            (( i++ ));
-        
-        done <<< "$data"
-        
-        # HACK: This is to keep it consistent, otherwise change (index >= total) to '>'
-        printf "\n" >> $file; 
-    fi       
+    local contents="$(cat $file)";            
     
-    # TODO: think this function is inefficient (counting line multiple times, herestring...)
+    while IFS= read -r line || [[ -n $line ]]; do
+        
+        eval "$command";
+        
+        (( index++ ));
+        echo "$index; $line" >> test_data
+    done <<< "$contents";        
 }
 
 # void clear_file(String file)
@@ -139,12 +94,55 @@ function clear_file() {
     > $1;
 }
 
-# void remove_line(String file, int index)
-function remove_line() {
-:
+# int correct_index(int index, int max, int? min)
+function correct_index() {
+    local index=$1;
+    local max=$2;
+    local min=$3;
+        
+    [[ -z $min ]] && min=0;    
+    (( index < 0 )) && index=$(( $max + $index));
+    (( index < 0 )) && index=$min;
+    (( index > max )) && index=$max;
+    
+    echo $index;
 }
 
-# void modify_line(String file, int line, int position, String data)
-function modify_line() {
-    :
+# void num_file(String file, int from, int start, int count)
+function num_file() {
+
+    local file=$1; shift;
+    local from=0;  [[ -n $1 ]] && from=$1; shift;
+    local start=0; [[ -n $1 ]] && start=$1; shift;
+    local end=-1;  [[ -n $1 ]] && end=$1; shift;   
+    
+    local init="local total=\$(wc -l < \$file); \
+                local width=\${#total}; \
+                local from=$from; \
+                local start=\$(correct_index $start \$total); \
+                local end=\$(correct_index $end \$total); \
+                local i=0;";
+    
+    local command='(( index >= start && index < end )) && \
+                   { i=$((index + from)); \
+                     printf "%*s" $(( width - ${#i} )); \
+                     printf "$i: %s\n" "$line"; }';
+    
+    process_file $file "$command" "$init"
 }
+
+# void list_file(String file, int start, int end)
+function list_file() {
+    local file=$1; shift;
+    local start=0; [[ -n $1 ]] && start=$1; shift;
+    local end=-1;  [[ -n $1 ]] && end=$1; shift;   
+    
+    local init="local total=\$(wc -l < \$file); \
+                local start=\$(correct_index $start \$total); \
+                local end=\$(correct_index $end \$total);";                
+    
+    local command='(( index >= start && index < end )) && echo "$line";'
+    
+    process_file $file "$command" "$init"
+}
+

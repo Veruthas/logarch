@@ -30,18 +30,22 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
             translates to 'if $(ask $prompt) == 'y'; then logarch...'
 
 
-* **edit** \<file\> (--list | --clear | --remove # [#] | (--append|--prepend|--insert #) \<line\> | --modify # # \<data\>)
+* **file** \<name\> --do <command> [<init>] | --list [# [#]] | --num [# [# [#]]] | --clear | --remove # [#] | (--append # |--prepend # |--insert # # |--modify # # #) \{text\}
 
-        <file>                  the name of the file to edit
+        <name>                              the name of the file
+
+        # almost all of the below functions use do
+        '--do      <command> [<init>]'              <init> is run once; for every line, evals 'command' 
+                                                    vars: $file,$contents,$line,$index,$command,$init
+        '--list    [start=0 [end=-1]]'              prints file from start to end [unlogged]
+        '--num     [from=0 [start=0 [end=-1]]]'     prints line-numbered file (counting from 'from') from start to end        
+        '--clear'                                   clears all lines of file
+        '--remove  <index> [n=1]'                   removes n lines from line# index
+        '--append  <n> {text}'                      appends n lines, using text
+        '--prepend <n> {text}'                      inserts n lines to top of file
+        '--insert  <index> <n> {text}'              inserts n lines at line index
+        '--modify  <index> <position> <n> {text}'   inserts n lines of text at (index, position) 
         
-        '--list'                prints a line-numbered view of the file [unlogged]
-        '--clear'               clears all lines of file
-        '--remove' # [#=1]      removes $2 lines from line $1
-        '--append <line>'       appends <line>
-        '--prepend <line>'      inserts <line> to top of file
-        '--insert # <line>'     inserts line at given index
-        '--modify # # <data>'   modifies the line $1 at position $2 with data         
-
         for any index or position i,             
             when i >=0
                 if i < 0, the action is a prepend
