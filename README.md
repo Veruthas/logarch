@@ -36,7 +36,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
         
         '--list'                prints a line-numbered view of the file [unlogged]
         '--clear'               clears all lines of file
-        '--remove' # [#]        removes $2 lines from line $1
+        '--remove' # [#=1]      removes $2 lines from line $1
         '--append <line>'       appends <line>
         '--prepend <line>'      inserts <line> to top of file
         '--insert # <line>'     inserts line at given index
@@ -96,13 +96,13 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
     
             days        ##
     
-            day         (1-31) [hh [mm]]
+            day         (1-31) [hh=00 [mm=00]]
             month       (same as 'day 01 00 00')
     
             weekday     ((1-7) | sunday | monday | tuesday | wednesday | thursday | friday | saturday) [hh [mm]]
             week        (same as 'weekday sunday 00 00)*
             
-            time        hh [mm]
+            time        hh [mm=00]
             daily       (same as 'time 00 00')    
             
             off         (turns off automatic syncing)
@@ -129,7 +129,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
     *\<args\>*:
 
     * (core | community | extra | multilib | testing | community-testing | extra-testing | multilib-testing)
-    * <name\> <server\> [siglevel]
+    * <name\> <server\> [siglevel=PackageRequired]
     
             '--list'            prints a numbered list of current repositories  [unlogged]
             '--clear'           removes all repositories
