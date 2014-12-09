@@ -57,20 +57,26 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
  
         list the defined tags [unlogged]
         
-#### *sync options*
-* **sync** [*--date* YYYY MM DD | --list | --this | --node #]
+#### *node options*
+* **node** [--to # | --list | --this | --index #]
+
+        creates a new node, without syncing/upgrading
+        (results in a fork if the same cache is used on different systems)
+        
+        --to #                  confirms that # is in the same branch, traces until then
+        --list                  prints out headers of all nodes in current branch 
+        --index #               prints out information about node at index (--list on invalid index)
+        --this                  prints out information about current sync        
+        
+            node info: <TODO>
+
+        [unlogged]
+        
+* **sync** [*--date* YYYY MM DD 
 
         --date (or nothing)     syncs either to today or to specified date, and upgrades
         
             if date is before current sync date, verify before doing (y/n)
-        
-        
-        --list                  prints out headers of all nodes current branch 
-        --node #                prints out information about node at index (--list on invalid index)
-        --this                  prints out information about current sync        
-        
-            node info: <TODO>
-        
         
         [unlogged]
         
