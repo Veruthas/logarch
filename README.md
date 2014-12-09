@@ -60,8 +60,8 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
 #### *node options*
 * **node** [--to # | --list | --this | --index #]
 
-        creates a new node, without syncing/upgrading
-        (results in a fork if the same cache is used on different systems)
+        (nothing)               creates a new node, without syncing/upgrading
+                                (results in a fork if the same cache is used on different systems)
         
         --to #                  confirms that # is in the same branch, traces until then
         --list                  prints out headers of all nodes in current branch 
@@ -72,7 +72,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
 
         [unlogged]
         
-* **sync** [*--date* YYYY MM DD 
+* **sync** [*--date* YYYY MM DD]
 
         --date (or nothing)     syncs either to today or to specified date, and upgrades
         
