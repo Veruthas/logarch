@@ -7,6 +7,5 @@ source logging.sh;
 source options.sh;
 source tag-options.sh;
 source package-options.sh;
-source help-options.sh;
 
 process_line "$@";

@@ -48,6 +48,42 @@ function ask() {
     return 1;
 }
 
+# int log(int val)
+function log() {
+    
+    local value=$1;
+    local result=-1;
+    
+    while (( value > 0 )); do
+        (( value /= 10 )); (( result++ ));
+    done
+    
+    echo $result;
+}
+
+# void list_file(String file, int? start)
+function list_file() {
+    local file=$1;
+    local i=$2;
+    [[ -z $i ]] && i=0;
+    
+    if [[ ! -e $file ]]; then
+        echo "file doesn't exist";
+    else
+        local maxlen=$(wc -l < $file);
+        maxlen=${#maxlen};
+        
+        # IFS= preserves left padding
+        #for line in "$(<$file)"; do        
+        while IFS= read line || [[ -n $line ]]; do
+            printf "%*s" $(( maxlen - ${#i} ));
+            
+            printf "$i: %s\n" "$line";
+            (( i++ ));
+        
+        done < $file;
+    fi
+}
 
 # void insert_lines(String file, int index, int count, String[] lines)
 function insert_lines() {
@@ -72,11 +108,10 @@ function insert_lines() {
     else        
         # use a here-string
         local data=$(cat $file);
-    
-        # clear the file
-        > $file;
+            
+        clear_file $file;
         
-        while read -r line; do
+        while IFS= read -r line || [[ -n $line ]]; do
         
             if (( $i == index )); then
                 local j=0;
@@ -97,4 +132,19 @@ function insert_lines() {
     fi       
     
     # TODO: think this function is inefficient (counting line multiple times, herestring...)
+}
+
+# void clear_file(String file)
+function clear_file() {
+    > $1;
+}
+
+# void remove_line(String file, int index)
+function remove_line() {
+:
+}
+
+# void modify_line(String file, int line, int position, String data)
+function modify_line() {
+    :
 }

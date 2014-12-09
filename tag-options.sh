@@ -92,6 +92,7 @@ function tag_defined() {
 
 #region TAG OPTIONS
 
+add_option "on";
 # void on_option(String tag, String[] args)
 function on_option() {
     local tag=$1;
@@ -102,6 +103,7 @@ function on_option() {
     fi
 }
 
+add_option "set";
 # void set_option(String[] tags)
 function set_option() {    
     
@@ -110,6 +112,7 @@ function set_option() {
     enable_log;
 }
 
+add_option "unset";
 # void unset_option(String[] tags)
 function unset_option() {
     
@@ -118,6 +121,7 @@ function unset_option() {
     enable_log;
 }
 
+add_option "tags";
 # String tags() : errors
 function tags_option() {
 

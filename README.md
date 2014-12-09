@@ -30,20 +30,29 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
             translates to 'if $(ask $prompt) == 'y'; then logarch...'
 
 
-* **edit** \<file\> (--list | --clear | --remove # | (--append|--prepend|--insert #) \<line\> | --modify # # \<data\>)
+* **edit** \<file\> (--list | --clear | --remove # [#] | (--append|--prepend|--insert #) \<line\> | --modify # # \<data\>)
 
         <file>                  the name of the file to edit
         
         '--list'                prints a line-numbered view of the file [unlogged]
         '--clear'               clears all lines of file
-        '--remove' #            removes line no. # from file        
+        '--remove' # [#]        removes $2 lines from line $1
         '--append <line>'       appends <line>
         '--prepend <line>'      inserts <line> to top of file
         '--insert # <line>'     inserts line at given index (# < 0 || # > lines is an append)
-        '--modify # # <data>'   modifies the line $1 at position $2 with data 
-                                    ($1 < 0 || $1 > lines is an append and $2 is ignored)
-                                    ($2 < 0 || $2 > length is added to end of line)
+        '--modify # # <data>'   modifies the line $1 at position $2 with data         
 
+        for any index or position i,             
+            when i >=0
+                if i < 0, the action is a prepend
+                if i < length, the action is an insert
+                if i >= length, the action is an append
+                
+            when i < 0 
+                if (length - i) == length - 1, the action is an append
+                if (length - i) < length - 1, the action is an insert
+                if (length - i) < 0, the action is a prepend
+        
 #### *tag options*
 * **on**    \<tag\> &nbsp;&nbsp;...
         
@@ -127,8 +136,9 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
             '--remove #'        removes repository at given index
             '--append <args>'   adds repository at end of list
             '--prepend <args>'  inserts repository to beginning of list
-            '--insert # <args>' inserts repository at given index (# < 0 || # > lines is an append)
+            '--insert # <args>' inserts repository at given index 
             
+            * see 'edit' information for how indices are handled
             
             special-name servers 'Include = arm_server.dat', and have 'SigLevel = PackageRequired'
 
