@@ -30,42 +30,45 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
             translates to 'if $(ask $prompt) == 'y'; then logarch...'
 
 
-* **file** \<name\> --do <command> [init] | --list [# [#]] | --num [# [# [#]]] | --clear | --remove # [#] | (--append # |--prepend # |--insert # # |--modify # #|--replace # # # # #) \{text\}
+* **file** \<name\> _<option>_ _{args}_
 
-        <name>                              the name of the file
-
-        # almost all of the below functions use do
-        '--do      <command> [<init>]'              <init> is run once; for every line, evals 'command' 
+        <name>                                      the name of the file
+        
+        
+        '--do      <command> [--init <init>]'[--from start [count]]               
+                                                    <init> is run once; 
+                                                    for every line, evals 'command' 
                                                     vars: $file, $contents, $line, $index, $command, $init
-                                                    last command of command and init should not end in a semi-colon
-                                                    
-        '--list    [start=0 [end=-1]]'              prints file from start to end [unlogged]
-        '--num     [from=0 [start=0 [end=-1]]]'     prints line-numbered file (counting from 'from') from start to end        
+                                                    last command of command and init should not end in a semi-colon                        
+        
+        '--list  [--from start [count]]'            prints file from start [unlogged]
+        '--num   [--base #] [--from start [count]]' prints line-numbered file (counting from 'from') from start to end
+                                                    base is the starting number of the lines
         
         '--clear'                                   clears all lines of file        
         
         '--remove  <index> [n=1]'                   removes n lines from line# index        
                 
-                
+        '--insert  <index> <n> {text}'              inserts n lines at line index        
         '--append  <n> {text}'                      appends n lines, using text
         '--prepend <n> {text}'                      inserts n lines to top of file
-        '--insert  <index> <n> {text}'              inserts n lines at line index
-        
-        '--modify  <index> <position> <text>        modifies line with text at (index, position)
+                
+        '--inject  <index> <position> <text>        injects line with text at (index, position)        
+        '--snip    <index> <position> <length>      snips out text within a line
         
         '--replace <i0> <p0> <i1> <p1> <n> {text}   removes text from (i0, p0) to (i1, p1) and inserts n lines
         
         
         for any index or position i,             
             when i >=0
-                if i < 0, the action is a prepend
-                if i < length, the action is an insert
-                if i >= length, the action is an append
+                if i  <  0,          the action is a prepend
+                if i  <  length,     the action is an insert
+                if i  >= length,     the action is an append
                 
             when i < 0 
-                if (length - i) == length - 1, the action is an append
-                if (length - i) < length - 1, the action is an insert
-                if (length - i) < 0, the action is a prepend
+                if (length - i)  == length - 1,  the action is an append
+                if (length - i)  <  length - 1,  the action is an insert
+                if (length - i)  <  0,           the action is a prepend
         
 #### *tag options*
 * **on**    \<tag\> &nbsp;&nbsp;...
@@ -133,9 +136,8 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
             * wait until next interval
             * sync
 
-* **conf** *(same args as __file__ [besides \<file\>])* | '--[un]comment #'
+* **conf** *(uses the file option, auto-supplies the config filename)*
 
-        '--[un]comment #'       comments/uncomments a line with a '#'
             
 
 * **repo** --list | --clear | --remove # | ((--append|--prepend|--insert #) *\<arg[s]\>*) 
@@ -177,6 +179,9 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
 
         looks for package [unlogged]
 
+## *Variables*        
+        no variables should be assumed public, save those mentioned explicitely (ex: in the file 'do' option)
+        
 ## *File Layout*    
     /etc/logarch.d/
         logarch.conf            -- defines cache path ('declare CACHE_PATH=<CACHE PATH>')
