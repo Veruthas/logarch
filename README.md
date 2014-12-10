@@ -133,7 +133,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
             * wait until next interval
             * sync
 
-* **conf** *(same args as __edit__ [besides \<file\>])* | '--[un]comment #'
+* **conf** *(same args as __file__ [besides \<file\>])* | '--[un]comment #'
 
         '--[un]comment #'       comments/uncomments a line with a '#'
             
@@ -152,7 +152,7 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
             '--prepend <args>'  inserts repository to beginning of list
             '--insert # <args>' inserts repository at given index 
             
-            * see 'edit' information for how indices are handled
+            * see 'file' information for how indices are handled
             
             special-name servers 'Include = arm_server.dat', and have 'SigLevel = PackageRequired'
 

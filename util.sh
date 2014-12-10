@@ -70,6 +70,7 @@ function verify_file() {
 
 # int file_length(String file)
 function file_length() {
+    [[ ! -e $1 ]] && touch $1;
     wc -l < $1;
 }
 
@@ -82,7 +83,7 @@ function do_file() {
     local -r command="$2";
     local -r init="$3";
     
-    echo init: \'$init\';echo command: \'$command\';
+    #echo init: \'$init\';echo command: \'$command\';
     
     
     local -r contents="$(cat $file)";         
@@ -279,7 +280,7 @@ function modify_in_file() {
     
     local command="if (( \$index == $index )); then \
                      local position=\$(correct_index $position \${#line}); \
-                     printf '%s%s%s\n' \${line:0:$position} \"$text\" \${line:$position} >> $file; \
+                     printf '%s%s%s\n' \${line:0:\$position} \"$text\" \${line:\$position} >> $file; \
                    else \
                      printf '%s\n' \$line >> $file; \
                    fi;";
