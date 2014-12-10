@@ -1,0 +1,60 @@
+#!/bin/bash
+
+source util.sh
+
+# void process (String file, 
+#                            --do, String command, String? init |
+#                            --list, int? start, int? end |
+#                            --num,  int? from, int? start, int? end
+#                            --clear
+#                            --remove, int index, int? count
+#                            --append, int count, String... text
+#                            
+function process() {
+    local file=$1;
+    local option=$2;
+    shift 2;
+    
+    case $option in
+        --do)
+            do_file "$file" "$@";
+            ;;
+        --list)
+            list_file "$file" "$@";
+            ;;
+        --num)
+            num_file "$file" "$@";
+            ;;
+        --clear)
+            clear_file "$file";
+            ;;
+        --remove)
+            remove_from_file "$file" "$@";
+            ;;
+        --append)
+            append_to_file "$file" "$@";
+            ;;
+        --prepend)
+            prepend_to_file "$file" "$@";
+            ;;
+        --insert)
+            insert_in_file "$file" "$@";
+            ;;
+        --modify)
+            modify_in_file "$file" "$@";
+            ;;
+        --replace)
+            replace_in_file "$file" "$@";
+            ;;
+        --make)
+            rm $file; for (( i=65; i<80; i++ )); do printf "\\x$(printf "%x" $i)\n" >> $file; done
+            ;;
+        *)
+            terminate 1 "invalid option: '$option'";
+            ;;
+    esac
+        
+        
+}
+
+process "$@";

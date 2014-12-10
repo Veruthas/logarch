@@ -102,18 +102,4 @@ function ask_option() {
     fi
 }
 
-add_option "edit";
-#void edit_option(String file, (
-#                               --list  | 
-#                               --clear | 
-#                              (--remove, int line) |
-#                              (--append, string text) |
-#                              (--prepend, string text) |
-#                              (--insert, int line, string text) |
-#                              (--modify, int line, int position)))
-function edit_option() {
-:
-
-}
-
 #endregion
