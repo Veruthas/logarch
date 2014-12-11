@@ -11,10 +11,9 @@ function terminate() {
 # bool contains_item(String item, String[] list)
 function contains_item() {
     local item=$1; shift;
-    local -a list=("$@");
     
-    for val in $list; do        
-        [[ $item == $val ]] && return 0;            
+    for val in "$@"; do                
+        [[ $item == $val ]] && return 0;        
     done
     return 1;
 }
@@ -26,6 +25,16 @@ function confirm_empty() {
     if [[ -n "$@" ]]; then
         terminate 1 "$message'$@'";
     fi
+}
+
+# bool is_integer(String value)
+function is_integer() {
+    [[ $1 =~ ^-?[0-9]+$ ]] && return 0 || return 1;
+}
+
+# void verify_file(String value, String error)
+function verify_integer() {
+    ! is_integer $1 && terminate 1 "expecting $2 ('$1')";    
 }
 
 # String ask(String message, String[] responses)
@@ -63,16 +72,6 @@ function log() {
 
 # HACK: Using eval for functional-style programming
 
-# void verify_file(String file) : terminate
-function verify_file() {
-    [[ ! -e $1 ]] && terminate 1 "file not found: '$1'";
-}
-
-# int file_length(String file)
-function file_length() {
-    [[ ! -e $1 ]] && touch $1;
-    wc -l < $1;
-}
 
 # void process_file(String file, String command, String? init)
 # defines: file, contents, line, index, command, init
@@ -98,7 +97,7 @@ function do_file() {
         eval "$command";
         
         (( index++ ));
-        echo "$index; $line" >> test_data
+        
     done <<< "$contents";        
 }
 

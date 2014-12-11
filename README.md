@@ -35,29 +35,26 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
         <name>                                      the name of the file
         
         
-        '--do      <command> [--init <init>]'[--from start [count]]               
-                                                    <init> is run once; 
-                                                    for every line, evals 'command' 
-                                                    vars: $file, $contents, $line, $index, $command, $init
-                                                    last command of command and init should not end in a semi-colon                        
+        '--do  <command> [--pre <command>] [--post <command>] [--from start [count]]'
+                                                    --pre is eval'd before the file is looped through
+                                                    --post is eval'd after                                                    
+                                                    VARS: $!file, $!length, $!start, $!count, $line, $index
         
-        '--list  [--from start [count]]'            prints file from start [unlogged]
-        '--num   [--base #] [--from start [count]]' prints line-numbered file (counting from 'from') from start to end
-                                                    base is the starting number of the lines
+        '--list  [--num #][--from start [count]]'   [unlogged] prints file from start, --num adds line-numbers starting from #
         
         '--clear'                                   clears all lines of file        
         
-        '--remove  <index> [n=1]'                   removes n lines from line# index        
-                
-        '--insert  <index> <n> {text}'              inserts n lines at line index        
+        Whole-Line Edit:
+        '--replace <index> <m> <n> {text}'          removes m lines and inserts n lines
+        '--remove  <index> [n=1]'                   removes n lines from line# index                
         '--append  <n> {text}'                      appends n lines, using text
         '--prepend <n> {text}'                      inserts n lines to top of file
-                
-        '--inject  <index> <position> <text>        injects line with text at (index, position)        
-        '--snip    <index> <position> <length>      snips out text within a line
+        '--insert  <index> <n> {text}'              inserts n lines at line index                        
         
-        '--replace <i0> <p0> <i1> <p1> <n> {text}   removes text from (i0, p0) to (i1, p1) and inserts n lines
-        
+        Partial-Line Edit:
+        '--swap <index> <pos> rem <text>'           snips out and injects text
+        '--snip     <index> <pos> rem'              snips out text within a line
+        '--inject   <index> <pos> <text>'           injects line with text at (index, position)        
         
         for any index or position i,             
             when i >=0

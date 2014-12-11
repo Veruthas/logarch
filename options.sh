@@ -3,11 +3,11 @@
 # Description: basic option handling
 
 
-declare OPTIONS="";
+declare -a OPTIONS=();
 
 # void add_option(String option)
 function add_option() {
-    OPTIONS+="$1 ";
+    OPTIONS+=("$1");
 }
 
 # void process(String[] args)
@@ -24,13 +24,15 @@ function process_line() {
 function process() {
     
     local option="$1"; shift;    
+        
+    # echo "${OPTIONS[@]}";
     
     if option_defined $option; then
                       
         ${option}_option "$@";
         
     else
-    
+        
         echo "invalid option -- '$option'."
         
         echo "type 'help' to see options."   
@@ -40,18 +42,10 @@ function process() {
     fi
 }
 
-
-
 # bool option_defined(String option)
 function option_defined() {
-    contains_item $1 "$OPTIONS";
+    contains_item $1 "${OPTIONS[@]}";
 }
-
-# bool option_log_defined(String option)
-function option_log_defined() {
-    contains_item $1 "$LOG_OPTIONS"
-}
-
 
 
 declare UNEMPTY_OPTION_ERROR="invalid argument: ";
@@ -63,7 +57,7 @@ function confirm_no_options() {
 
 #region BASIC OPTIONS
 
-add_option "do"
+OPTIONS+=("do")
 # void do_option(String command) : errors
 function do_option() {
 
@@ -77,7 +71,7 @@ function do_option() {
     enable_log;
 }
 
-add_option "if"
+OPTIONS+=("if")
 # void if_option(String command, String[] options)
 function if_option() {  
 
@@ -89,7 +83,7 @@ function if_option() {
     fi
 }
 
-add_option "ask";
+OPTIONS+=("ask")
 # void ask_option(String prompt, String[] options)
 function ask_option() {
     local prompt=$1;
