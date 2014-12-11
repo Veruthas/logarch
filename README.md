@@ -92,17 +92,6 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
 * **vars**
 
     lists defined variables
-
-#### *tag options*
-
-    
-* **[un]set**   {tag}
-
-        SETS or UNSETS the supplied tags
-       
-* **tags**
- 
-        list the defined tags [unlogged]
         
 #### *node options*
 * **node** [--to # | --list | --this | --index #]
