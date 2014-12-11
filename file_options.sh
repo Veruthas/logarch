@@ -36,7 +36,7 @@ function clear_file() {
     > $1;
 }
 
-declare DEBUG=true;
+#declare DEBUG=true;
 
 # void do_to_file(String file, String command, String pre, String post, int start?, int? count, int? length)
 function do_to_file() {
@@ -82,6 +82,8 @@ function do_to_file() {
     eval "$post";
 }
 
+#region FILE_OPTIONS
+
 OPTIONS+=("file");
 function file_option() {
 
@@ -92,36 +94,46 @@ function file_option() {
     case $suboption in
         --do)
             file_do_option "$file" "$@";
+            enable_logging;
         ;;   
         --list)
             file_list_option "$file" "$@";
         ;;
         --clear)
             file_clear_option "$file" "$@";
+            enable_logging;
         ;;
         --replace)
             file_replace_option "$file" "$@";
+            enable_logging;
         ;;
         --remove)
             file_remove_option "$file" "$@";
+            enable_logging;
         ;;
         --append)
             file_append_option "$file" "$@";
+            enable_logging;
         ;;
         --prepend)
             file_prepend_option "$file" "$@";
+            enable_logging;
         ;;
         --insert)
             file_insert_option "$file" "$@";
+            enable_logging;
         ;;
         --swap)
             file_swap_option "$file" "$@";
+            enable_logging;
         ;;
         --snip)
             file_snip_option "$file" "$@";
+            enable_logging;
         ;;
         --inject)
             file_inject_option "$file" "$@";
+            enable_logging;
         ;;
         *)
             terminate 1 "invalid sub-option '$suboption'";
@@ -371,3 +383,5 @@ function file_snip_option() {
 function file_inject_option() {
     file_swap_option $1 $2 $3 0 "$4";
 }
+
+#endregion

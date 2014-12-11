@@ -29,6 +29,11 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
         ASKS a (y/n) question, if answer is yes > ...
             translates to 'if $(ask $prompt) == 'y'; then logarch...'
 
+* **ignore** ...
+
+        Processes what follows with logging it (if logged)
+        
+#### *file options*
 
 * **file** \<name\> _<option>_ _{args}_
 
@@ -66,11 +71,30 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
                 if (length - i)  == length - 1,  the action is an append
                 if (length - i)  <  length - 1,  the action is an insert
                 if (length - i)  <  0,           the action is a prepend
+
+#### *variable options*
+* **set** \<name\> [--val \<value\> | --from \<command\>]
+
+    Defines a variable in the VARS associative array (for use in on or <command>)
+    
+        <nothing>   sets <name> to 'true'
+        --val       uses the literal string supplied
+        --from      evals it and sets it the result (watch for '');        
         
+        
+* **unset** \<name\>
+    Removes variable from VARS
+        
+* **on**    \<name\> &nbsp;&nbsp;...
+        
+    IF <var> defined  ...
+
+* **vars**
+
+    lists defined variables
+
 #### *tag options*
-* **on**    \<tag\> &nbsp;&nbsp;...
-        
-        IF tag defined > ...
+
     
 * **[un]set**   {tag}
 
@@ -177,16 +201,29 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
         looks for package [unlogged]
 
 ## *Variables*        
-        no variables should be assumed public, save those mentioned explicitely (ex: in the file 'do' option)
+        no variables should be assumed public, save those mentioned explicitely (ex: in the file 'do' option, or the VARS associative array)
         
 ## *File Layout*    
     /etc/logarch.d/
-        logarch.conf            -- defines cache path ('declare CACHE_PATH=<CACHE PATH>')
-                
-        node/ -> <cache>/<#>/   -- link to <Cache Path>/nodes/<##########>
-
-        var/  -> <var>/<#>/     -- link to system specific data
         
+        var/   -> <var>          -- link to system specific data
+        
+        cache/ -> <cache>        -- link to the cache directory
+        
+        node/  -> <cache>/<#>/   -- link to <Cache Path>/nodes/<##########>
+        
+        
+    <Variable Path>                 -- per installation files
+                
+            vars.dat                    -- list of all variables
+                                            <format>
+                                                <name>
+                                                <value>
+                
+            pacman-base.dat             -- file with the extra non-repo pacman.conf info
+            
+            pacman-repo.dat             -- file listing pacman.conf's repositories                                
+                                                           
         
     <Cache Path>/
         packages/                   -- contains all the downloaded packages
@@ -211,16 +248,4 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
                                                  (hours | days | day | weekday | time) (to calculate next)
                                                  <args>            
                                                                  
-                trace.dat                   -- log of all the commands
-                                               
-                tags.dat                    -- list of all tags (copied to each node)
-                
-                                                  
-    <Variable Path>                 -- per installation files
-        nodes/
-            <##########>/
-            
-                pacman-base.dat             -- file with the extra non-repo pacman.conf info
-                
-                pacman-repo.dat             -- file listing pacman.conf's repositories                                
-                                                
+                trace.dat                   -- log of all the commands     

@@ -13,7 +13,7 @@ function add_option() {
 # void process(String[] args)
 function process_line() {
     
-    disable_log;
+    reset_logging;
     
     process "$@";
     
@@ -54,10 +54,9 @@ function confirm_no_options() {
 }
 
 
-
 #region BASIC OPTIONS
 
-OPTIONS+=("do")
+OPTIONS+=("do");
 # void do_option(String command) : errors
 function do_option() {
 
@@ -68,11 +67,11 @@ function do_option() {
     
     eval "$command";
     
-    enable_log;
+    enable_logging;
 }
 
-OPTIONS+=("if")
-# void if_option(String command, String[] options)
+OPTIONS+=("if");
+# void if_option(String command, String... options)
 function if_option() {  
 
     local command="$1";
@@ -83,8 +82,8 @@ function if_option() {
     fi
 }
 
-OPTIONS+=("ask")
-# void ask_option(String prompt, String[] options)
+OPTIONS+=("ask");
+# void ask_option(String prompt, String... options)
 function ask_option() {
     local prompt=$1;
     shift;
@@ -96,4 +95,11 @@ function ask_option() {
     fi
 }
 
+OPTIONS+=("ignore");
+# void ignore_option(String... options);
+function ignore_option() {
+    suppress_logging;
+    
+    process "$@";
+}
 #endregion
