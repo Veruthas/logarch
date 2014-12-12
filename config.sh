@@ -16,8 +16,9 @@ declare -r NODE_PATH="$CACHE_PATH/nodes";
 declare -r CURRENT_NODE_PATH="$CONF_PATH/node";
 
 
+
 declare -r ARCH_SYNC_PATH="/var/lib/pacman/sync"
-declare -r ARCH_KEY_PATH='/etc/pacman.d/gnupg";
+declare -r ARCH_KEY_PATH="/etc/pacman.d/gnupg";
 
 # void create_cache_folder(String path)
 function create_cache_folder() {

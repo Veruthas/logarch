@@ -7,12 +7,19 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
 
 ## Commands
 ### **logstrap**
-   - used to set up the logarch configuration and pacstrap the system
-   - TODO: Add options
+   - format is: **logstrap** \<option\>
+
+trace <var-path=/var/lib/logarch> <cache-path> <ID>
+    traces a branch to a node:    
+    
+create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <logarch-script>
+
 
 ### **logarch**
    - format is: **logarch** \<option\> ...
-   
+
+    any logged command will automatically create a fork if the current node has children
+    
 #### *basic options*
 * **do**    \<command\>
     
@@ -98,8 +105,8 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
 
         (nothing)               creates a new node, without syncing/upgrading                                
         --name                  sets the node name, the default is a date string
-        --list                  prints out numbered list of headers of all nodes in current branch 
-        --info [index]          prints out node info at either current or # node
+        --list                  prints out numbered list of headers of all nodes
+        --info [ID]             prints out node info at either current or # node
         --to ID                 verifies that current node leads to node ID, and then traces to it.
         
         if (nothing), ask for a name, defaults to date string
@@ -121,13 +128,13 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
         <args>:                                    
             off       (turns off automatic syncing)
                                                                      
-            months    [--num n=1] [--day (1-31)=1] <query last?>
+            months    [--num n=1] [--day (1-31)=1] [--last]
                 *(For dates past the days in that month (29/30/31 in Feb, 31 in Apr/Jun/Sep/Nov) auto the last day of that month.)
             
-            weeks     [--num n=1] [--day (1-7 | sunday | monday | tuesday | wednesday | thursday | friday | saturday)=1] <query last?>
+            weeks     [--num n=1] [--day (1-7 | sunday | monday | tuesday | wednesday | thursday | friday | saturday)=1] [--last]
                 every weekday x, at the supplied 
             
-            days      [--num n=1] <query from when (now|last sync|other date)?>
+            days      [--num n=1] [--now | --last | --from YYYY MM DD]=--now
             
 
         sets the interval to auto-sync
@@ -222,29 +229,28 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
     
         nodes/                      -- contains the sync nodes
             <###########>/              -- 10 digit id of node (created sequentially)
-                        
-                last/ -> <#>/               -- link to last node
-                
-                node_info.dat               -- information about the node
-                                               <format>
-                                                 name
-                                                 id
-                                                 date_created
-                
-                               
+                                        
                 sync/                       -- copy of /var/lib/pacman/sync/
-                [gnupg/]                    -- copy of /etc/pacman.d/gnupg/            
-                
-            
+                [gnupg/]                    -- copy of /etc/pacman.d/gnupg/                                        
                 aur/                        -- all aur installations per node
                 
+                node_info.dat               -- information about the node
+                                               <format>                                                 
+                                                 id
+                                                 name
+                                                 date_created
                                                  
+                last_node.dat               -- the parent node ide
+                next_node.dat               -- all node ids after this node                
+                
+                
                 arm_server.dat              -- calculated arch rollback machine server                                            
                                                Server=http://seblu.net/a/arm/YYYY/MM/DD/$repo/os/$arch
                  
-                sync_date.dat               current <utc-timestamp>    
+                sync_date.dat               -- current <utc-timestamp>    
                 
-                [auto_sync.dat]                  <format>                                            
+                [auto_sync.dat]             -- information about auto-sync intervals  
+                                               <format>                                            
                                                  next <utc-timestamp>
                                                  (months|weeks|days)
                                                  num
@@ -258,4 +264,5 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
                                                 end   (utc-timestamp)
                                                 
                 pkgs.dat                    -- log of all packages installed
+                
                 
