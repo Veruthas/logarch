@@ -1,29 +1,29 @@
 #!/bin/bash
 #
-# Description: Handles basic logarch configuration
+# Description: Handles basic logarch path and configuration
 
 
 declare -r CONF_PATH='../_debug';
 
 declare -r VAR_PATH="$CONF_PATH/var";
+
 declare -r CACHE_PATH="$CONF_PATH/cache";
-declare -r NODE_PATH="$CONF_PATH/node";
+
+declare -r PKG_PATH="$CACHE_PATH/pkgs";
+
+declare -r NODE_PATH="$CACHE_PATH/nodes";
+
+declare -r CURRENT_NODE_PATH="$CONF_PATH/node";
 
 
-# String last_sync_index(int value);
-function last_sync_index() {
+declare -r ARCH_SYNC_PATH="/var/lib/pacman/sync"
+declare -r ARCH_KEY_PATH='/etc/pacman.d/gnupg";
 
-    local syncs=($SYNC_PATH/[0-9]*);
-        
-    local current;
+# void create_cache_folder(String path)
+function create_cache_folder() {
+    mkdir -p "$1" -v;
     
-    if [[ "${syncs[@]}" == "$SYNC_PATH/[0-9]*" ]]; then
-        current=-1;        
-    else        
-        current=${syncs[-1]};
-        current=$(basename $current);
-        current=$(to_unpadded_number $current)        
-    fi  
+    mkdir "$1/pkgs" -v;
     
-    echo $current;
+    mkdir "$1/nodes" -v;
 }

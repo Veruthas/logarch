@@ -94,62 +94,58 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
     lists defined variables
         
 #### *node options*
-* **node** [--to # | --list | --this | --index #]
+* **node** [--name <name> | --list | --info [#] | --to ID]
 
-        (nothing)               creates a new node, without syncing/upgrading
-                                (results in a fork if the same cache is used on different systems)
+        (nothing)               creates a new node, without syncing/upgrading                                
+        --name                  sets the node name, the default is a date string
+        --list                  prints out numbered list of headers of all nodes in current branch 
+        --info [index]          prints out node info at either current or # node
+        --to ID                 verifies that current node leads to node ID, and then traces to it.
         
-        --to #                  confirms that # is in the same branch, traces until then
-        --list                  prints out headers of all nodes in current branch 
-        --index #               prints out information about node at index (--list on invalid index)
-        --this                  prints out information about current sync        
+        if (nothing), ask for a name, defaults to date string
         
-            node info: <TODO>
-
         [unlogged]
         
-* **sync** [*--date* YYYY MM DD]
+* **sync** [--name <name>] [--date YYYY MM DD]
 
         --date (or nothing)     syncs either to today or to specified date, and upgrades
         
-            if date is before current sync date, verify before doing (y/n)
+        verify if supplied date is older than current sync
+        
+        asks for a name (defaults to date string)
         
         [unlogged]
         
-* **auto** \<args\>
+* **auto** \<args\> 
     
-        <args>:
-            hours       ##
-    
-            days        ##
-    
-            day         (1-31) [hh=00 [mm=00]]
-            month       (same as 'day 01 00 00')
-    
-            weekday     ((1-7) | sunday | monday | tuesday | wednesday | thursday | friday | saturday) [hh [mm]]
-            week        (same as 'weekday sunday 00 00)*
+        <args>:                                    
+            off       (turns off automatic syncing)
+                                                                     
+            months    [--num n=1] [--day (1-31)=1] <query last?>
+                *(For dates past the days in that month (29/30/31 in Feb, 31 in Apr/Jun/Sep/Nov) auto the last day of that month.)
             
-            time        hh [mm=00]
-            daily       (same as 'time 00 00')    
+            weeks     [--num n=1] [--day (1-7 | sunday | monday | tuesday | wednesday | thursday | friday | saturday)=1] <query last?>
+                every weekday x, at the supplied 
             
-            off         (turns off automatic syncing)
-        
+            days      [--num n=1] <query from when (now|last sync|other date)?>
+            
 
         sets the interval to auto-sync
 
         when interval has been reached, will ask before a <package option> whether to:
-            * turn auto-syncing off
+            * turn auto-syncing off (convert to absolute date)
             * sync
                 
         if interval has gone by since last sync date (auto set to monday, when last sync was sunday)
         will ask whether to:
             * wait until next interval
             * sync
-
+        
+        [unlogged]
+           
 * **conf** *(uses the file option, auto-supplies the config filename)*
 
             
-
 * **repo** --list | --clear | --remove # | ((--append|--prepend|--insert #) *\<arg[s]\>*) 
     
     *\<args\>*:
@@ -172,6 +168,13 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
 
         simply logs and executes 'pacman-key <command>'
 
+        
+* **flatten** [--to #]
+    extracts and combines all files to either current node, or # from root
+    
+* **extract** [--to #]
+    extracts log to either current node, or # from root
+        
 #### *package options*
 
 * **pkg** [--confirm] [--options <options\>]{pkgs}
@@ -215,26 +218,44 @@ Uses a tree-like log structure to log every pkg/aur install, sync, and update (a
                                                            
         
     <Cache Path>/
-        packages/                   -- contains all the downloaded packages
+        pkgs/                       -- contains all the downloaded packages
     
         nodes/                      -- contains the sync nodes
             <###########>/              -- 10 digit id of node (created sequentially)
                         
                 last/ -> <#>/               -- link to last node
-            
+                
+                node_info.dat               -- information about the node
+                                               <format>
+                                                 name
+                                                 id
+                                                 date_created
+                
+                               
                 sync/                       -- copy of /var/lib/pacman/sync/
-                [gnupg/]                    -- copy of /etc/pacman.d/gnupg/
+                [gnupg/]                    -- copy of /etc/pacman.d/gnupg/            
+                
             
                 aur/                        -- all aur installations per node
-            
+                
+                                                 
                 arm_server.dat              -- calculated arch rollback machine server                                            
                                                Server=http://seblu.net/a/arm/YYYY/MM/DD/$repo/os/$arch
-                                            
-                info.dat                    -- sync info, also used for auto-syncing
+                 
+                sync_date.dat               current <utc-timestamp>    
+                
+                [auto_sync.dat]                  <format>                                            
+                                                 next <utc-timestamp>
+                                                 (months|weeks|days)
+                                                 num
+                                                 [day]
+                                                 
+                                                    
+                trace.dat                   -- log of all the commands 
                                                <format>
-                                                 YYYY MM DD                                                 
-                                                 YYYY MM DD hh mm ss (if auto, is next time to check for)
-                                                 (hours | days | day | weekday | time) (to calculate next)
-                                                 <args>            
-                                                                 
-                trace.dat                   -- log of all the commands     
+                                                command
+                                                start (utc-timestap)
+                                                end   (utc-timestamp)
+                                                
+                pkgs.dat                    -- log of all packages installed
+                

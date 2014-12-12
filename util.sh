@@ -1,12 +1,13 @@
 #!/bin/bash
 #
-# Description: utility functions
+# Description: misc. utility functions
 
 # void terminate(int errorCode, String prompt)
 function terminate() {
     echo "ERROR: $2" >&2;
     exit $1;
 }
+
 
 # bool contains_item(String item, String[] list)
 function contains_item() {
@@ -27,15 +28,6 @@ function confirm_empty() {
     fi
 }
 
-# bool is_integer(String value)
-function is_integer() {
-    [[ $1 =~ ^-?[0-9]+$ ]] && return 0 || return 1;
-}
-
-# void verify_file(String value, String error)
-function verify_integer() {
-    ! is_integer $1 && terminate 1 "expecting $2 ('$1')";    
-}
 
 # String ask(String message, String[] responses)
 function ask() {
@@ -55,6 +47,17 @@ function ask() {
     
     echo noresult
     return 1;
+}
+
+
+# bool is_integer(String value)
+function is_integer() {
+    [[ $1 =~ ^-?[0-9]+$ ]] && return 0 || return 1;
+}
+
+# void verify_file(String value, String error)
+function verify_integer() {
+    ! is_integer $1 && terminate 1 "expecting $2 ('$1')";    
 }
 
 # int log(int val)
