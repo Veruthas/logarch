@@ -150,26 +150,80 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
         
         [unlogged]
            
-* **conf** *(uses the file option, auto-supplies the config filename)*
+* **conf** [--clear] <option> <value>
 
-            
+    Edits the [option] part of the pacman.conf file
+    
+    (see man 5 pacman.conf for details...)
+    
+    --clear <option>     clear any of the options (giving defaults when it exists)
+    
+    <options>                                    
+        <Paths>              <Corresponds To>:
+        --root  <path>       'RootDir   = <path>'       (default=/)
+        --db    <path>       'DBPath    = <path>'       (default=/usr/local/var/lib/pacman/)
+        --cache <path>       'CacheDir  = <path>'       (default=/usr/local/var/cache/pacman/pkg/)
+        --gpg   <path>       'GPGDir    = <path>'       (default=/usr/local/etc/pacman.d/gnupg/)
+        --log   <file>       'LogFile   = <file>'       (default=/usr/local/var/log/pacman.log)
+        
+        --include <file>     'Include = <file>'         (--clear --include <file>)
+        
+        <Pkg Handling>
+        --hold  <pkg>        'HoldPkg   = <pkg> ...'    (--clear --hold <pkg>)
+        
+        --ipkg  <pkg>        'IgnorePkg = <pkg> ...'    (--clear --ipkg <pkg>)
+        --igrp  <grp>        'IgnoreGroup = <grp> ...'  (--clear --igrp <grp>)
+        --noup <file>        'NoUpgrade = <file> ...'
+        --noex <file>        'NoExtract = <file> ...'                                   
+        
+        --keep (ins|cur)     'CleanMethod = KeepInstalled &| KeepCurrent'  (default)        
+                
+        --delta (0.0-2.0)    'UseDelta = (0.0-2.0)'     (default=0.7)
+        
+        --arch (<arch>)      'Architecture = <arch>'    (default=auto) (i686|x86_64)    
+        
+        --sig [--local|--remote] <sig_check> <sig_allowed>    
+                             'SigLevel           = <sig_check> <sig_allowed>'
+                             'LocalFileSigLevel  = <sig_check> <sig_allowed>'
+                             'RemoveFileSigLevel = <sig_check> <sig_allowed>'
+        
+        --xfer <command>     'XferCommand = <command>'
+        --wget               'XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u'
+        --curl               'XferCommand = /usr/bin/curl -C - -f %u > %o'
+
+        <Misc>
+        --verbose            'VerbosePkgLists'
+        --space              'CheckSpace'
+        --total              'TotalDownload'
+        --color              'Color'
+        --syslog             'UseSysLog'
+
+    
 * **repo** --list | --clear | --remove # | ((--append|--prepend|--insert #) *\<arg[s]\>*) 
     
-    *\<args\>*:
+        '--list'            prints a numbered list of current repositories  [unlogged]
+        '--clear'           removes all repositories
+        '--remove #'        removes repository at given index
+        
+        '--append <args>'   adds repository at end of list
+        '--prepend <args>'  inserts repository to beginning of list
+        '--insert # <args>' inserts repository at given index 
+            
+            <args>:
 
-    * (core | community | extra | multilib | testing | community-testing | extra-testing | multilib-testing)
-    * \<name\> \<server\> [siglevel=PackageRequired]
-    
-            '--list'            prints a numbered list of current repositories  [unlogged]
-            '--clear'           removes all repositories
-            '--remove #'        removes repository at given index
-            '--append <args>'   adds repository at end of list
-            '--prepend <args>'  inserts repository to beginning of list
-            '--insert # <args>' inserts repository at given index 
-            
-            * see 'file' information for how indices are handled
-            
-            special-name servers 'Include = arm_server.dat', and have 'SigLevel = PackageRequired'
+            * (core | community | extra | multilib | testing | community-testing | extra-testing | multilib-testing)
+            * <name> <server> <sig_check> <sig_allowed>
+        
+                
+                
+                <name>            <The name of the repository>
+                <server>          <The URL of the repository>
+                <sig_check>     = [Package|Database](Optional|Never|Required)=Optional
+                <sig_allowed>   = [Package|Database](TrustedOnly|TrustAll)=TrustedOnly
+                
+                * see 'file' information for how indices are handled
+                
+                special-name servers 'Include = arm_server.dat', and have 'SigLevel = PackageRequired'
 
 * **key** \<command\>
 
@@ -184,7 +238,7 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
         
 #### *package options*
 
-* **pkg** [--confirm] [--options <options\>]{pkgs}
+* **pkg** [--confirm] {pkgs}
 
         [only logged on success]
     
@@ -199,6 +253,8 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
 
         looks for package [unlogged]
 
+*(add more, this is just the basics)*
+        
 ## *Variables*        
         no variables should be assumed public, save those mentioned explicitely (ex: in the file 'do' option, or the VARS associative array)
         

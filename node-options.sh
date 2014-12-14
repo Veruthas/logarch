@@ -202,4 +202,3 @@ function auto_option_off() {
     
     disable_auto_sync="$id";
 }
-
