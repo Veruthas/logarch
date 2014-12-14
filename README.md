@@ -156,47 +156,47 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
     
     (see man 5 pacman.conf for details...)
     
-    --clear <option>     clear any of the options (giving defaults when it exists)
+        --clear <option>     clear any of the options (giving defaults when it exists)
     
-    <options>                                    
-        <Paths>              <Corresponds To>:
-        --root  <path>       'RootDir   = <path>'       (default=/)
-        --db    <path>       'DBPath    = <path>'       (default=/usr/local/var/lib/pacman/)
-        --cache <path>       'CacheDir  = <path>'       (default=/usr/local/var/cache/pacman/pkg/)
-        --gpg   <path>       'GPGDir    = <path>'       (default=/usr/local/etc/pacman.d/gnupg/)
-        --log   <file>       'LogFile   = <file>'       (default=/usr/local/var/log/pacman.log)
+        <options>                                    
+            <Paths>              <Corresponds To>:
+            --root  <path>       'RootDir   = <path>'       (default=/)
+            --db    <path>       'DBPath    = <path>'       (default=/usr/local/var/lib/pacman/)
+            --cache <path>       'CacheDir  = <path>'       (default=/usr/local/var/cache/pacman/pkg/)
+            --gpg   <path>       'GPGDir    = <path>'       (default=/usr/local/etc/pacman.d/gnupg/)
+            --log   <file>       'LogFile   = <file>'       (default=/usr/local/var/log/pacman.log)
         
-        --include <file>     'Include = <file>'         (--clear --include <file>)
+            --include <file>     'Include = <file>'         (--clear --include <file>)
         
-        <Pkg Handling>
-        --hold  <pkg>        'HoldPkg   = <pkg> ...'    (--clear --hold <pkg>)
+            <Pkg Handling>
+            --hold  <pkg>        'HoldPkg   = <pkg> ...'    (--clear --hold <pkg>)
         
-        --ipkg  <pkg>        'IgnorePkg = <pkg> ...'    (--clear --ipkg <pkg>)
-        --igrp  <grp>        'IgnoreGroup = <grp> ...'  (--clear --igrp <grp>)
-        --noup <file>        'NoUpgrade = <file> ...'
-        --noex <file>        'NoExtract = <file> ...'                                   
+            --ipkg  <pkg>        'IgnorePkg = <pkg> ...'    (--clear --ipkg <pkg>)
+            --igrp  <grp>        'IgnoreGroup = <grp> ...'  (--clear --igrp <grp>)
+            --noup <file>        'NoUpgrade = <file> ...'
+            --noex <file>        'NoExtract = <file> ...'                                   
         
-        --keep (ins|cur)     'CleanMethod = KeepInstalled &| KeepCurrent'  (default)        
-                
-        --delta (0.0-2.0)    'UseDelta = (0.0-2.0)'     (default=0.7)
-        
-        --arch (<arch>)      'Architecture = <arch>'    (default=auto) (i686|x86_64)    
-        
-        --sig [--local|--remote] <sig_check> <sig_allowed>    
-                             'SigLevel           = <sig_check> <sig_allowed>'
-                             'LocalFileSigLevel  = <sig_check> <sig_allowed>'
-                             'RemoveFileSigLevel = <sig_check> <sig_allowed>'
-        
-        --xfer <command>     'XferCommand = <command>'
-        --wget               'XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u'
-        --curl               'XferCommand = /usr/bin/curl -C - -f %u > %o'
+            --keep (ins|cur)     'CleanMethod = KeepInstalled &| KeepCurrent'  (default)        
+                    
+            --delta (0.0-2.0)    'UseDelta = (0.0-2.0)'     (default=0.7)
+            
+            --arch (<arch>)      'Architecture = <arch>'    (default=auto) (i686|x86_64)    
+            
+            --sig [--local|--remote] <sig_check> <sig_allowed>    
+                                'SigLevel           = <sig_check> <sig_allowed>'
+                                'LocalFileSigLevel  = <sig_check> <sig_allowed>'
+                                'RemoveFileSigLevel = <sig_check> <sig_allowed>'
+            
+            --xfer <command>     'XferCommand = <command>'
+            --wget               'XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u'
+            --curl               'XferCommand = /usr/bin/curl -C - -f %u > %o'
 
-        <Misc>
-        --verbose            'VerbosePkgLists'
-        --space              'CheckSpace'
-        --total              'TotalDownload'
-        --color              'Color'
-        --syslog             'UseSysLog'
+            <Misc>
+            --verbose            'VerbosePkgLists'
+            --space              'CheckSpace'
+            --total              'TotalDownload'
+            --color              'Color'
+            --syslog             'UseSysLog'
 
     
 * **repo** --list | --clear | --remove # | ((--append|--prepend|--insert #) *\<arg[s]\>*) 
