@@ -10,6 +10,3 @@ source file-options.sh;
 source vars-options.sh;
 source node-options.sh
 #source package-options.sh;
-
-
-process_line "$@";

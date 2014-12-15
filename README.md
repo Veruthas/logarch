@@ -128,13 +128,13 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
         <args>:                                    
             off       (turns off automatic syncing)
                                                                      
-            months    [--num n=1] [--day (1-31)=1] [--last]
+            months    [--num n=1] [--on (1-31)=1] [--from (now | YYYY MM DD)]
                 *(For dates past the days in that month (29/30/31 in Feb, 31 in Apr/Jun/Sep/Nov) auto the last day of that month.)
             
-            weeks     [--num n=1] [--day (1-7 | sunday | monday | tuesday | wednesday | thursday | friday | saturday)=1] [--last]
+            weeks     [--num n=1] [--on (1-7 | sunday | monday | tuesday | wednesday | thursday | friday | saturday)=1] [--from (now | YYYY MM DD)]
                 every weekday x, at the supplied 
             
-            days      [--num n=1] [--now | --last | --from YYYY MM DD]=--now
+            days      [--num n=1] (--from (now |YYYY MM DD)))
             
 
         sets the interval to auto-sync
@@ -173,14 +173,16 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
         
             --ipkg  <pkg>        'IgnorePkg = <pkg> ...'    (--clear --ipkg <pkg>)
             --igrp  <grp>        'IgnoreGroup = <grp> ...'  (--clear --igrp <grp>)
-            --noup <file>        'NoUpgrade = <file> ...'
-            --noex <file>        'NoExtract = <file> ...'                                   
+            --noup  <file>       'NoUpgrade = <file> ...'
+            --noex  <file>       'NoExtract = <file> ...'                                   
         
             --keep (ins|cur)     'CleanMethod = KeepInstalled &| KeepCurrent'  (default)        
                     
             --delta (0.0-2.0)    'UseDelta = (0.0-2.0)'     (default=0.7)
             
-            --arch (<arch>)      'Architecture = <arch>'    (default=auto) (i686|x86_64)    
+            --arch <arch>        'Architecture = <arch>'    (default=auto) (i686|x86_64|...)    
+            --arch32             'Architecture = i686'
+            --arch64             'Architecture = x86_64'
             
             --sig [--local|--remote] <sig_check> <sig_allowed>    
                                 'SigLevel           = <sig_check> <sig_allowed>'

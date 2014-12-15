@@ -60,6 +60,7 @@ function verify_integer() {
     ! is_integer $1 && terminate 1 "expecting $2 ('$1')";    
 }
 
+
 # int log(int val)
 function log() {
     
@@ -84,4 +85,9 @@ function pad_number() {
 # int unpad_number(String value)
 function unpad_number {
     echo $((10#$1));
+}
+
+# int abs(int value)
+function abs() {
+     echo ${1#-}
 }

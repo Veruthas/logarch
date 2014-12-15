@@ -103,9 +103,23 @@ function set_sync_date() {
     echo "Server=http://seblu.net/a/arm//$repo/os/$arch" >> "$node/arm_server.dat";
 }
 
+# void write_auto_file(int id, int seconds, (months|weeks|days), int num, int extra)
+function write_auto_file() {
+    local file="$NODE_PATH/$1/auto_sync.dat";
+    echo "$2" >> "$file";
+    echo "$3" >> "$file";
+    echo "$4" >> "$file";
+    echo "$2" >> "$file";
+}
+
 # void see_auto_sync(String id, int num, (1..31) day, bool last)
 function set_monthly_sync() {
-:
+    local id=$1;
+    local num=$2;
+    local day=$3;
+    local last=$4;
+    
+    
 }
 
 # void set_weekly_sync(String id, int num, (1..7) day, bool last)
@@ -113,7 +127,7 @@ function set_weekly_sync() {
 :
 }
 
-# void set_daily_sync(String id, int num, (--now | --last | --from YYYY MM DD))
+# void set_daily_sync(String id, int num, (int year, int month, int day)?)
 function set_daily_sync() {
 :
 }
@@ -126,9 +140,9 @@ function disable_auto_sync() {
 }
 
 
-# void auto_option(--months [--num n=1] [--day (1..31)=1];
-#                  --weeks  [--num n=1] [--day (1..7|sunday|monday|tuesday|wednesday|thursday|friday|saturday)=1]
-#                  --days   [--num n=1] [--now | --last | --from YYYY MM DD]=--now
+# void auto_option(--months [--num n=1] [--on (1..31)=1] [--last];
+#                  --weeks  [--num n=1] [--on (1..7|sunday|monday|tuesday|wednesday|thursday|friday|saturday)=1] [--last]
+#                  --days   [--num n=1] [--from (now | YYYY MM DD)]
 #                  --off)
 function auto_option() {
     
@@ -152,7 +166,7 @@ function auto_option() {
     esac
 }
 
-# void auto_option_months(String id, [--num n=1] [--day (1-31)=1] [--last])
+# void auto_option_months(String id, [--num n=1] [--on (1-31)=1]) [--last]
 function auto_option_months() {
     local id=$1; shift;
     local num=1;
@@ -166,7 +180,7 @@ function auto_option_months() {
         shift 2;
     fi
     
-    if [[ "$1" == "--day" ]]; then
+    if [[ "$1" == "--on" ]]; then
         verify_integer "$2" "day of the month (1-31)";        
         day=$2;
         (( day < 1 || day > 31 )) && terminate 1 "--day must be from (1..31)";
@@ -175,7 +189,7 @@ function auto_option_months() {
     
     if [[ "$1" == "--last" ]]; then
         last=true;
-        shift;    
+        shift;
     fi
     
     confirm_no_options "$@";
@@ -183,14 +197,96 @@ function auto_option_months() {
     set_auto_months "$id" "$num" "$day" "$last";
 }
 
-# void auto_option_weeks(String id, [--num n=1] [--day (1-7|<weekday>)=1] [--last])
+# void auto_option_weeks(String id, [--num n=1] [--on (1-7|<weekday>)=1]) [--last]
 function auto_option_weeks() {
     local id=$1; shift;
+    local num=1;
+    local day=1;
+    local last=false;
+    
+   
+    if [[ "$1" == "--num" ]]; then
+        verify_integer "$2" "number of weeks";
+        (( num < 1 )) && terminate 1 "--num must be greater than 0";
+        num=$2;
+        shift 2;
+    fi
+    
+    if [[ "$1" == "--on" ]]; then
+                        
+        case "${2,,}" in            
+            1|sunday)
+                day=1;
+            ;;
+            2|monday)
+                day=2;
+            ;;
+            3|tuesday)
+                day=3;
+            ;;
+            4|wednesday)
+                day=4;
+            ;;
+            5|thursday)
+                day=5;
+            ;;
+            6|friday)
+                day=6;
+            ;;
+            7|saturday)
+                day=7;
+            ;;
+            *)
+                terminate 1 "--day must be from (1..7)";
+            ;;
+        esac
+        
+        shift 2;
+    fi
+    
+    if [[ "$1" == "--last" ]]; then
+        last=true;
+        shift;
+    fi
+    
+    confirm_no_options "$@";
+    
+    set_auto_months "$id" "$num" "$day"  "$last";
 }
 
-# void auto_option_days(String id, [--num n=1] [--now | --from YYYY MM DD]=<--from LAST>
+# void auto_option_days(String id, [--num n=1], [--from (now |YYYY MM DD))]
 function auto_options_days() {
     local id=$1; shift;
+    local num=1;
+    local from="";
+    
+    if [[ "$1" == "--num" ]]; then
+        verify_integer "$2" "number of weeks";
+        (( num < 1 )) && terminate 1 "--num must be greater than 0";
+        num=$2;
+        shift 2;
+    fi
+    
+    if [[ "$1" == "--from" ]]; then
+    
+        if [[ "$2" == "now" ]]; then
+            
+            from="$(date +'%Y %m %d')";
+            
+            shift 2;
+            
+        else            
+            verify_date "$2" "$3" "$4";
+            
+            from="$2 $3 $4";
+            
+            shift 4;
+        fi            
+    fi
+    
+    confirm_no_options "$@";
+    
+    set_auto_days "$id" "$num" "$from";
 }
 
 
@@ -201,4 +297,10 @@ function auto_option_off() {
     confirm_no_options "$@";
     
     disable_auto_sync="$id";
+}
+
+
+
+function check_for_updates() {
+:
 }
