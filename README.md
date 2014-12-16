@@ -104,7 +104,7 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
 * **node** [--name <name> | --list | --info [#] | --to ID]
 
         (nothing)               creates a new node, without syncing/upgrading                                
-        --name                  sets the node name, the default is a date string
+        --name                  sets the node name, the default is the root name + id?
         --list                  prints out numbered list of headers of all nodes
         --info [ID]             prints out node info at either current or # node
         --to ID                 verifies that current node leads to node ID, and then traces to it.
@@ -123,18 +123,15 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
         
         [unlogged]
         
-* **auto** \<args\> 
+* **auto** off | ((months | weeks | days) [--num n]=1 [--from (now | last | MM [DD [YYYY]])]
     
-        <args>:                                    
-            off       (turns off automatic syncing)
-                                                                     
-            months    [--num n=1] [--on (1-31)=1] [--from (now | YYYY MM DD)]
-                *(For dates past the days in that month (29/30/31 in Feb, 31 in Apr/Jun/Sep/Nov) auto the last day of that month.)
+        off                         turns off automatic syncing
+        month | weeks | days       
+        
+        *(For dates past the days in that month (29/30/31 in Feb, 31 in Apr/Jun/Sep/Nov) auto the last day of that month.)
             
-            weeks     [--num n=1] [--on (1-7 | sunday | monday | tuesday | wednesday | thursday | friday | saturday)=1] [--from (now | YYYY MM DD)]
-                every weekday x, at the supplied 
             
-            days      [--num n=1] (--from (now |YYYY MM DD)))
+        
             
 
         sets the interval to auto-sync
@@ -187,7 +184,7 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
             --sig [--local|--remote] <sig_check> <sig_allowed>    
                                 'SigLevel           = <sig_check> <sig_allowed>'
                                 'LocalFileSigLevel  = <sig_check> <sig_allowed>'
-                                'RemoveFileSigLevel = <sig_check> <sig_allowed>'
+                                'RemoteFileSigLevel = <sig_check> <sig_allowed>'
             
             --xfer <command>     'XferCommand = <command>'
             --wget               'XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u'
