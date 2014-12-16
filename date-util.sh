@@ -15,137 +15,6 @@ function get_now_timestamp() {
     date -u +%s;
 }
 
-# int get_date_timestamp(int year, int month, int day)
-function get_date_timestamp() {
-    date -u --date="$2 $1 $3" +'%s';
-}
-
-
-# int get_utc_yearmonth(int seconds)
-function get_utc_year() {
-    local seconds=$1;
-    date -u --date='@$seconds' +'%Y';
-}
-
-# int get_utc_month(int seconds)
-function get_utc_month() {
-    local seconds=$1;
-    date -u --date='@$seconds' +'%m';
-}
-
-# int get_utc_day(int seconds)
-function get_utc_day() {
-    local seconds=$1;
-    date -u --date='@$seconds' +'%d';
-}
-
-
-# int get_local_year(int seconds)
-function get_local_year() {
-    local seconds=$1;
-    date --date='@$seconds' +'%Y';
-}
-
-# int get_local_month(int seconds)
-function get_local_month() {
-    local seconds=$1;
-    date --date='@$seconds' +'%m';
-}
-
-# int get_local_day(int seconds)
-function get_local_day() {
-    local seconds=$1;
-    date --date='@$seconds' +'%d';
-}
-
-
-# String get_nice_date(int seconds, String options)
-function to_nice_date() {
-    date --date=@"$1" +"$NICE_DATE_STRING" $2;
-}
-
-# String get_now()
-function nice_now() {
-    date +"$NICE_DATE_STRING";
-}
-
-# String nice_local(int seconds)
-function nice_local() {
-    to_nice_date $1;
-}
-
-# String nice_utc(int seconds)
-function nice_utc() {
-    to_nice_date $1 -u;
-}
-
-# int from_date_string(String date)
-function from_date_string() {
-    date --date="$1" +%s;
-}
-
-
-
-# int add_hours(int seconds, int hours=1)
-function add_hours() {
-    local seconds=$1;
-    local hours=${2:-1}
-    
-    seconds=$((seconds + $((SECONDS_PER_HOUR * hours)) ));
-    
-    date -u --date=@$seconds +%s;
-}
-
-# int add_days(int seconds, int days=1)
-function add_days() {
-    local seconds=$1;
-    local days=${2:-1};
-    
-    seconds=$(( seconds + $((SECONDS_PER_DAY * days))));
-    
-    date -u --date=@$seconds +%s;
-}
-
-# int add_month(int seconds, int months=1)
-function add_months() {
-    local seconds=$1;
-    
-    local month=$(date -u --date=@$1 +%m);
-    local year=$(date -u --date=@$1 +%Y);
-    local day=$(date -u --date=@$1 +%d);
-    local time=$(date -u --date=@$1 +%T);
-    
-    local months=${2:-1};
-    
-    local delta_months=$((month - 1 + months));
-        
-    # subtracting
-    if (( delta_months < 0 )); then
-        # years are the amount of 12s + 1 (-1 is really 11 in the count of months)
-        (( delta_months++ ));
-        
-        local delta_years=$(( $((delta_months / 12)) - 1));
-        
-        year=$((year + $delta_years));
-        
-        month=$(( 12 + $((delta_months % 12)) ));    
-        
-    # adding
-    else
-        local delta_months=$((month - 1 + months));
-        
-        local delta_years=$((delta_months / 12 ));
-        
-        year=$((year + $delta_years));
-        
-        month=$((1 + $((delta_months % 12)) ));    
-    fi
-     
-    date --date="$month/$day/$year $time UTC" +%s;    
-}
-
-
-
 # int time_to_pattern(int seconds, String pattern)
 function time_to_pattern() {
     local seconds=$1;    
@@ -155,13 +24,14 @@ function time_to_pattern() {
 }
 
 # int to_date_timestamp(int month, [int day]=1, [int year]=now)
-function to_date_timestamp() {
+function get_date_timestamp() {
     local month=$1;
     local day=${2:-1};
     local year=${3:-$(date +%Y)};
     
     date --date="$month/$day/$year" +%s;
 }
+
 
 # int floor_minute(int seconds)
 function floor_minute() {
@@ -186,6 +56,7 @@ function floor_month() {
 function floor_year() {
     time_to_pattern $1 '01/01/%Y';
 }
+
 
 # int days_in_month(1-12 month, int year)
 function days_in_month() {
@@ -250,4 +121,131 @@ function verify_date() {
             terminate 1 "month must be (1-12)";
         ;;
     esac
+}
+
+
+
+# int get_utc_yearmonth(int seconds)
+function get_utc_year() {
+    local seconds=$1;
+    date -u --date='@$seconds' +'%Y';
+}
+
+# int get_utc_month(int seconds)
+function get_utc_month() {
+    local seconds=$1;
+    date -u --date='@$seconds' +'%m';
+}
+
+# int get_utc_day(int seconds)
+function get_utc_day() {
+    local seconds=$1;
+    date -u --date='@$seconds' +'%d';
+}
+
+
+# int get_local_year(int seconds)
+function get_local_year() {
+    local seconds=$1;
+    date --date='@$seconds' +'%Y';
+}
+
+# int get_local_month(int seconds)
+function get_local_month() {
+    local seconds=$1;
+    date --date='@$seconds' +'%m';
+}
+
+# int get_local_day(int seconds)
+function get_local_day() {
+    local seconds=$1;
+    date --date='@$seconds' +'%d';
+}
+
+
+
+
+# int add_hours(int seconds, int hours=1)
+function add_hours() {
+    local seconds=$1;
+    local hours=${2:-1}
+    
+    seconds=$((seconds + $((SECONDS_PER_HOUR * hours)) ));
+    
+    date -u --date=@$seconds +%s;
+}
+
+# int add_days(int seconds, int days=1)
+function add_days() {
+    local seconds=$1;
+    local days=${2:-1};
+    
+    seconds=$(( seconds + $((SECONDS_PER_DAY * days))));
+    
+    date -u --date=@$seconds +%s;
+}
+
+# int add_month(int seconds, int months=1)
+function add_months() {
+    local seconds=$1;
+    
+    local month=$(date -u --date=@$1 +%m);
+    local year=$(date -u --date=@$1 +%Y);
+    local day=$(date -u --date=@$1 +%d);
+    local time=$(date -u --date=@$1 +%T);
+    
+    local months=${2:-1};
+    
+    local delta_months=$((month - 1 + months));
+        
+    # subtracting
+    if (( delta_months < 0 )); then
+        # years are the amount of 12s + 1 (-1 is really 11 in the count of months)
+        (( delta_months++ ));
+        
+        local delta_years=$(( $((delta_months / 12)) - 1));
+        
+        year=$((year + $delta_years));
+        
+        month=$(( 12 + $((delta_months % 12)) ));    
+        
+    # adding
+    else
+        local delta_months=$((month - 1 + months));
+        
+        local delta_years=$((delta_months / 12 ));
+        
+        year=$((year + $delta_years));
+        
+        month=$((1 + $((delta_months % 12)) ));    
+    fi
+     
+    date --date="$month/$day/$year $time UTC" +%s;    
+}
+
+
+
+# String get_nice_date(int seconds, String options)
+function to_nice_date() {
+    date --date=@"$1" +"$NICE_DATE_STRING" $2;
+}
+
+# String get_now()
+function nice_now() {
+    date +"$NICE_DATE_STRING";
+}
+
+# String nice_local(int seconds)
+function nice_local() {
+    to_nice_date $1;
+}
+
+# String nice_utc(int seconds)
+function nice_utc() {
+    to_nice_date $1 -u;
+}
+
+# int from_date_string(String date)
+function from_date_string() {
+    date --date="$1" +%s;
 }

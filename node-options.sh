@@ -30,12 +30,12 @@ function get_current_id() {
 
 }
 
-# String create_node(String name) | returns path of new node
+# String create_node(String name)
 function create_node() {
        
     local id=$(get_next_node_id);
-    local name=${1:-$(get_now)}; 
-    local date=$(get_timestamp);
+    local name=${1:-$(echo "TODO: GET CURRENT NAME")}; 
+    local date=$(get_now_timestamp);
     
     mkdir -v "$NODE_PATH/$id";
     
@@ -103,34 +103,15 @@ function set_sync_date() {
     echo "Server=http://seblu.net/a/arm//$repo/os/$arch" >> "$node/arm_server.dat";
 }
 
-# void write_auto_file(int id, int seconds, (months|weeks|days), int num, int extra)
+# void write_auto_file(int id, int next-seconds, (months|weeks|days), int num)
 function write_auto_file() {
     local file="$NODE_PATH/$1/auto_sync.dat";
+    > "$file"
     echo "$2" >> "$file";
     echo "$3" >> "$file";
     echo "$4" >> "$file";
-    echo "$2" >> "$file";
 }
 
-# void see_auto_sync(String id, int num, (1..31) day, bool last)
-function set_monthly_sync() {
-    local id=$1;
-    local num=$2;
-    local day=$3;
-    local last=$4;
-    
-    
-}
-
-# void set_weekly_sync(String id, int num, (1..7) day, bool last)
-function set_weekly_sync() {
-:
-}
-
-# void set_daily_sync(String id, int num, (int year, int month, int day)?)
-function set_daily_sync() {
-:
-}
 
 # void disable_auto_sync(String id)
 function disable_auto_sync() {
@@ -140,166 +121,48 @@ function disable_auto_sync() {
 }
 
 
-# void auto_option(--months [--num n=1] [--on (1..31)=1] [--last];
-#                  --weeks  [--num n=1] [--on (1..7|sunday|monday|tuesday|wednesday|thursday|friday|saturday)=1] [--last]
-#                  --days   [--num n=1] [--from (now | YYYY MM DD)]
-#                  --off)
+# void auto_option(off | ((month|week|days), 
+#                           [--num, int n] 
+#                           [--from, (last | now | 
+#                                (int month, [int day=1 [int year=<now.year>]]])
 function auto_option() {
     
     local id=$(get_current_id);
-    
-    local type=$1; shift;    
-    
-    case $type in
-        --months)
-            set_auto_months "$id" "$@";
-        ;;
-        --weeks)
-            set_auto_weeks "$id" "$@";
-        ;;
-        --days)
-            set_auto_days "$id" "$@";
-        ;;
-        --off)
-            disable_auto_sync "$id" "$@";
-        ;;
-    esac
-}
-
-# void auto_option_months(String id, [--num n=1] [--on (1-31)=1]) [--last]
-function auto_option_months() {
-    local id=$1; shift;
+    local type=$1; shift;
     local num=1;
-    local day=1;
-    local last=false;
+    local from=;
     
-    if [[ "$1" == "--num" ]]; then
-        verify_integer "$2" "number of months";
-        (( num < 1 )) && terminate 1 "--num must be greater than 0";
-        num=$2;
-        shift 2;
-    fi
-    
-    if [[ "$1" == "--on" ]]; then
-        verify_integer "$2" "day of the month (1-31)";        
-        day=$2;
-        (( day < 1 || day > 31 )) && terminate 1 "--day must be from (1..31)";
-        shift 2;
-    fi
-    
-    if [[ "$1" == "--last" ]]; then
-        last=true;
-        shift;
-    fi
-    
-    confirm_no_options "$@";
-    
-    set_auto_months "$id" "$num" "$day" "$last";
-}
-
-# void auto_option_weeks(String id, [--num n=1] [--on (1-7|<weekday>)=1]) [--last]
-function auto_option_weeks() {
-    local id=$1; shift;
-    local num=1;
-    local day=1;
-    local last=false;
-    
-   
-    if [[ "$1" == "--num" ]]; then
-        verify_integer "$2" "number of weeks";
-        (( num < 1 )) && terminate 1 "--num must be greater than 0";
-        num=$2;
-        shift 2;
-    fi
-    
-    if [[ "$1" == "--on" ]]; then
-                        
-        case "${2,,}" in            
-            1|sunday)
-                day=1;
-            ;;
-            2|monday)
-                day=2;
-            ;;
-            3|tuesday)
-                day=3;
-            ;;
-            4|wednesday)
-                day=4;
-            ;;
-            5|thursday)
-                day=5;
-            ;;
-            6|friday)
-                day=6;
-            ;;
-            7|saturday)
-                day=7;
-            ;;
-            *)
-                terminate 1 "--day must be from (1..7)";
-            ;;
-        esac
+    if [[ "$type" == 'off' ]]; then
+        auto_option_off $id;
         
-        shift 2;
+        confirm_no_options "$@";
+    
+        disable_auto_sync="$id";
+    else
+        if [[ "$1" == --num ]]; then
+            verify_integer "$2" "--num"
+            num=$2;
+            shift;
+        fi
+        
+        if [[ "$1" == --from ]]; then
+            if [[ "$2" == 'now' ]]; then
+                from=$(get_now_timestamp);
+            elif [[ "$2" == 'last' ]]; then
+                from=$(get_last_sync_timestamp);
+            else                
+                from=$(get_date_timestamp $month ${3:-} ${4:-});
+            fi
+        else
+            from=$(get_last_sync_timestamp);
+        fi
     fi
-    
-    if [[ "$1" == "--last" ]]; then
-        last=true;
-        shift;
-    fi
-    
-    confirm_no_options "$@";
-    
-    set_auto_months "$id" "$num" "$day"  "$last";
 }
 
-# void auto_option_days(String id, [--num n=1], [--from (now |YYYY MM DD))]
-function auto_options_days() {
-    local id=$1; shift;
-    local num=1;
-    local from="";
-    
-    if [[ "$1" == "--num" ]]; then
-        verify_integer "$2" "number of weeks";
-        (( num < 1 )) && terminate 1 "--num must be greater than 0";
-        num=$2;
-        shift 2;
-    fi
-    
-    if [[ "$1" == "--from" ]]; then
-    
-        if [[ "$2" == "now" ]]; then
-            
-            from="$(date +'%Y %m %d')";
-            
-            shift 2;
-            
-        else            
-            verify_date "$2" "$3" "$4";
-            
-            from="$2 $3 $4";
-            
-            shift 4;
-        fi            
-    fi
-    
-    confirm_no_options "$@";
-    
-    set_auto_days "$id" "$num" "$from";
+# String get_last_sync_timestamp()
+function get_last_sync_timestamp() {
+:
 }
-
-
-# void auto_option_off(String id)
-function auto_option_off() {
-    local id=$1; shift;
-    
-    confirm_no_options "$@";
-    
-    disable_auto_sync="$id";
-}
-
-
 
 function check_for_updates() {
 :
