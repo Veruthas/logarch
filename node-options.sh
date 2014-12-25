@@ -7,6 +7,7 @@ function create_root() {
 :
 }
 
+
 # String get_next_node_id();
 function get_next_node_id() {
     local -r search_string='[0-9]+';
@@ -24,6 +25,11 @@ function get_next_node_id() {
     fi
 }
 
+# get_node_path(int id)
+function get_node_path() {
+    echo "$NODE_PATH/$1";
+}
+
 function get_current_id() {
 
     basename "$CURRENT_NODE_PATH";
@@ -38,14 +44,9 @@ function create_node() {
     local date=$(get_now_timestamp);
     
     mkdir -v "$NODE_PATH/$id";
-    
-    last=$(realpath $CURRENT_NODE_PATH);
-    
-    new="$NODE_PATH/$id";
         
-    basename $last >> "$next/last_node.dat";
-    echo "$id" >> "$last/next_node.dat";
-    
+    new="$NODE_PATH/$id";
+            
     echo "$name" >> "$new/node_info.dat";
     echo "$id" >> "$new/node_info.dat";
     echo "$date" >> "$new/node_info.dat";
@@ -53,11 +54,18 @@ function create_node() {
     echo $id;
 }
 
-# void move_to_node(String id)
-function move_to_node() {
-    rm -v "$CURRENT_NODE_PATH";
-    ln -s "$NODE_PATH/$1" "$CURRENT_NODE_PATH";
+# String link_nodes(int last-id, int next-id)
+function link_nodes() {
+    local last_id=$1;
+    local next_id=$2;
+    
+    local last="$(get_node_path $last_id)";
+    local next="$(get_node_path $next_id)";    
+    
+    last_id > "$next/last_node.dat";
+    next_id >> "$last/next_node.dat";
 }
+
 
 # void setup_empty_node(String id)
 function setup_empty_node() {
@@ -89,6 +97,11 @@ function setup_sync_node() {
     
 }
 
+# void set_current_node(String id)
+function set_current_node() {
+    rm -v "$CURRENT_NODE_PATH";
+    ln -s "$NODE_PATH/$1" "$CURRENT_NODE_PATH";
+}
 
 # void setup_sync_date(String id, int timestamp)
 function set_sync_date() {
@@ -103,11 +116,12 @@ function set_sync_date() {
     echo "Server=http://seblu.net/a/arm//$repo/os/$arch" >> "$node/arm_server.dat";
 }
 
+
+#region Auto Sync
 # void write_auto_file(int id, int next-seconds, (months|weeks|days), int num)
 function write_auto_file() {
-    local file="$NODE_PATH/$1/auto_sync.dat";
-    > "$file"
-    echo "$2" >> "$file";
+    local file="$NODE_PATH/$1/auto_sync.dat";    
+    echo "$2" >  "$file";
     echo "$3" >> "$file";
     echo "$4" >> "$file";
 }
@@ -167,3 +181,5 @@ function get_last_sync_timestamp() {
 function check_for_updates() {
 :
 }
+
+#endregion

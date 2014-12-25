@@ -101,38 +101,21 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
     lists defined variables
         
 #### *node options*
-* **node** [--name <name> | --list | --info [#] | --to ID]
+* **node** [--name <name>] [--sync [now | YYYY MM DD]]
 
-        (nothing)               creates a new node, without syncing/upgrading                                
-        --name                  sets the node name, the default is the root name + id?
-        --list                  prints out numbered list of headers of all nodes
-        --info [ID]             prints out node info at either current or # node
-        --to ID                 verifies that current node leads to node ID, and then traces to it.
-        
-        if (nothing), ask for a name, defaults to date string
-        
+        creates a new node, without syncing/upgrading
+        --name                  sets the node name, the default is the current date string
+        --sync                  syncs and upgrades, optionally changing the repos to the date supplied                
+                                if explicit date is earlier than date of current sync, will ask to verify
         [unlogged]
         
-* **sync** [--name <name>] [--date YYYY MM DD]
-
-        --date (or nothing)     syncs either to today or to specified date, and upgrades
         
-        verify if supplied date is older than current sync
-        
-        asks for a name (defaults to date string)
-        
-        [unlogged]
-        
-* **auto** off | ((months | weeks | days) [--num n]=1 [--from (now | last | MM [DD [YYYY]])]
+* **auto** (off | ((months | weeks | days) [--num n]=1 [ --from (now | last | MM [DD [YYYY]]) ] )
     
         off                         turns off automatic syncing
         month | weeks | days       
         
         *(For dates past the days in that month (29/30/31 in Feb, 31 in Apr/Jun/Sep/Nov) auto the last day of that month.)
-            
-            
-        
-            
 
         sets the interval to auto-sync
 
@@ -154,17 +137,9 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
     (see man 5 pacman.conf for details...)
     
         --clear <option>     clear any of the options (giving defaults when it exists)
-    
+            
         <options>                                    
-            <Paths>              <Corresponds To>:
-            --root  <path>       'RootDir   = <path>'       (default=/)
-            --db    <path>       'DBPath    = <path>'       (default=/usr/local/var/lib/pacman/)
-            --cache <path>       'CacheDir  = <path>'       (default=/usr/local/var/cache/pacman/pkg/)
-            --gpg   <path>       'GPGDir    = <path>'       (default=/usr/local/etc/pacman.d/gnupg/)
-            --log   <file>       'LogFile   = <file>'       (default=/usr/local/var/log/pacman.log)
-        
-            --include <file>     'Include = <file>'         (--clear --include <file>)
-        
+
             <Pkg Handling>
             --hold  <pkg>        'HoldPkg   = <pkg> ...'    (--clear --hold <pkg>)
         
@@ -197,6 +172,16 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
             --color              'Color'
             --syslog             'UseSysLog'
 
+        <Other (not implemented yet, since these are hardwired for the time being            
+            <Paths>              <Corresponds To>:               
+            --root  <path>       'RootDir   = <path>'       (default=/)
+            --db    <path>       'DBPath    = <path>'       (default=/usr/local/var/lib/pacman/)
+            --cache <path>       'CacheDir  = <path>'       (default=/usr/local/var/cache/pacman/pkg/)
+            --gpg   <path>       'GPGDir    = <path>'       (default=/usr/local/etc/pacman.d/gnupg/)
+            --log   <file>       'LogFile   = <file>'       (default=/usr/local/var/log/pacman.log)
+                        
+            --include <file>     'Include = <file>'         (--clear --include <file>)
+
     
 * **repo** --list | --clear | --remove # | ((--append|--prepend|--insert #) *\<arg[s]\>*) 
     
@@ -227,13 +212,6 @@ create <var-path=/var/lib/logarch> <cache-path> <sync-date=now> <auto=off> <loga
 * **key** \<command\>
 
         simply logs and executes 'pacman-key <command>'
-
-        
-* **flatten** [--to #]
-    extracts and combines all files to either current node, or # from root
-    
-* **extract** [--to #]
-    extracts log to either current node, or # from root
         
 #### *package options*
 
